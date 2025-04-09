@@ -1,4 +1,5 @@
 import ModeToggle from "@/components/internal/mode-toggle";
+import Logo from "./logo";
 
 const Header = () => {
   return (
@@ -7,6 +8,7 @@ const Header = () => {
       style={{ zIndex: 12 }}
     >
       <div className="flex items-center gap-2">
+        <Logo />
         <h5 className="font-semibold text-[20px] leading-none">
           Build-in Components With Shadcn/UI
         </h5>
