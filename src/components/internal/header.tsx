@@ -9,9 +9,6 @@ const Header = () => {
     >
       <div className="flex items-center gap-2">
         <Logo />
-        <h5 className="font-semibold text-[20px] leading-none">
-          Build-in Components With Shadcn/UI
-        </h5>
       </div>
       <div className="flex items-center gap-6">
         <ModeToggle />
