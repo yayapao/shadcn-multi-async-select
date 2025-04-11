@@ -1,0 +1,24 @@
+{
+  "data": [
+    { "name": "New York", "country": "USA", "code": "NYC" },
+    { "name": "London", "country": "UK", "code": "LON" },
+    { "name": "Tokyo", "country": "Japan", "code": "TYO" },
+    { "name": "Paris", "country": "France", "code": "PAR" },
+    { "name": "Berlin", "country": "Germany", "code": "BER" },
+    { "name": "Sydney", "country": "Australia", "code": "SYD" },
+    { "name": "Moscow", "country": "Russia", "code": "MOW" },
+    { "name": "Beijing", "country": "China", "code": "BJS" },
+    { "name": "São Paulo", "country": "Brazil", "code": "SAO" },
+    { "name": "Los Angeles", "country": "USA", "code": "LAX" },
+    { "name": "Mumbai", "country": "India", "code": "BOM" },
+    { "name": "Cairo", "country": "Egypt", "code": "CAI" },
+    { "name": "Bangkok", "country": "Thailand", "code": "BKK" },
+    { "name": "Istanbul", "country": "Turkey", "code": "IST" },
+    { "name": "Buenos Aires", "country": "Argentina", "code": "BUE" },
+    { "name": "Cape Town", "country": "South Africa", "code": "CPT" },
+    { "name": "Toronto", "country": "Canada", "code": "YYZ" },
+    { "name": "Dubai", "country": "UAE", "code": "DXB" },
+    { "name": "Seoul", "country": "South Korea", "code": "SEL" },
+    { "name": "Rome", "country": "Italy", "code": "ROM" }
+  ]
+}
