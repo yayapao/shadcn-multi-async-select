@@ -1,17 +1,13 @@
+"use client";
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  CheckIcon,
-  XCircle,
-  ChevronDown,
-  XIcon,
-  WandSparkles,
-} from "lucide-react";
+import { XCircle, ChevronDown, XIcon, WandSparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
@@ -113,16 +109,22 @@ interface Props
   modalPopover?: boolean;
 
   /**
-   * If true, renders the multi-select component as a child of another component.
-   * Optional, defaults to false.
-   */
-  asChild?: boolean;
-
-  /**
    * Additional class names to apply custom styles to the multi-select component.
    * Optional, can be used to add custom styles.
    */
   className?: string;
+
+  /**
+   * Text to be displayed when the clear button is clicked.
+   * Optional, defaults to "Clear".
+   */
+  clearText?: string;
+
+  /**
+   * Text to be displayed when the close button is clicked.
+   * Optional, defaults to "Close".
+   */
+  closeText?: string;
 
   /**
    * Callback function triggered when the selected values change.
@@ -146,10 +148,11 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
       variant,
       defaultValue = [],
       placeholder = "Select options",
+      clearText = "Clear",
+      closeText = "Close",
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      asChild = false,
       className,
       loading = false,
       async = false,
@@ -241,7 +244,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild={asChild}>
+        <PopoverTrigger asChild>
           <Button
             ref={ref}
             {...props}
@@ -274,6 +277,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                         <XCircle
                           className="ml-2 h-4 w-4 cursor-pointer"
                           onClick={(event) => {
+                            debugger;
                             event.stopPropagation();
                             toggleOption(value);
                           }}
@@ -303,7 +307,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                 </div>
                 <div className="flex items-center justify-between">
                   <XIcon
-                    className="h-4 mx-2 cursor-pointer text-zinc-500"
+                    className="h-4 cursor-pointer text-zinc-500"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleClear();
@@ -311,9 +315,9 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                   />
                   <Separator
                     orientation="vertical"
-                    className="flex min-h-6 h-full"
+                    className="flex min-h-6 h-full mx-2"
                   />
-                  <ChevronDown className="h-4 mx-2 cursor-pointer text-zinc-300 dark:text-zinc-500" />
+                  <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500" />
                 </div>
               </div>
             ) : (
@@ -321,7 +325,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                 <span className="text-sm font-normal text-zinc-500">
                   {placeholder}
                 </span>
-                <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500 mx-2" />
+                <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500" />
               </div>
             )}
           </Button>
@@ -380,17 +384,10 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     onSelect={toggleAll}
                     className="cursor-pointer"
                   >
-                    <div
-                      className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary border-zinc-400 dark:border-zinc-200",
-                        selectedValues.length === options.length
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible"
-                      )}
-                    >
-                      <CheckIcon className="h-4 w-4" />
-                    </div>
-                    <span>全选</span>
+                    <Checkbox
+                      checked={selectedValues.length === options.length}
+                    />
+                    <span>Select all</span>
                   </CommandItem>
                 )}
                 {options.map((option) => {
@@ -401,16 +398,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                       onSelect={() => toggleOption(option.value)}
                       className="cursor-pointer"
                     >
-                      <div
-                        className={cn(
-                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary border-zinc-400 dark:border-zinc-200",
-                          isSelected
-                            ? "bg-primary text-primary-foreground"
-                            : "opacity-50 [&_svg]:invisible"
-                        )}
-                      >
-                        <CheckIcon className="h-4 w-4" />
-                      </div>
+                      <Checkbox checked={isSelected} />
                       <span>{option.label}</span>
                     </CommandItem>
                   );
@@ -425,7 +413,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                         onSelect={handleClear}
                         className="flex-1 justify-center cursor-pointer"
                       >
-                        清除
+                        {clearText}
                       </CommandItem>
                       <Separator
                         orientation="vertical"
@@ -437,7 +425,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     onSelect={() => setIsPopoverOpen(false)}
                     className="flex-1 justify-center cursor-pointer max-w-full"
                   >
-                    关闭
+                    {closeText}
                   </CommandItem>
                 </div>
               </CommandGroup>
