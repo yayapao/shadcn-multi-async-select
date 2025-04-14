@@ -15,6 +15,9 @@ export default function MultiAsyncSelectClient({ options }: Props) {
   return (
     <div className="flex flex-col gap-4 p-4">
       <div>
+        <h5 className="text-sm font-medium mb-2">
+          Also support multiple select only
+        </h5>
         <MultiAsyncSelect
           options={options}
           onValueChange={(value) => console.log(value)}

@@ -240,7 +240,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                       <Badge key={value}>
                         <span>{option?.label}</span>
                         <div
-                          className="ml-2 h-4 w-4 cursor-pointer"
+                          className="ml-2 size-4 cursor-pointer"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
@@ -253,12 +253,10 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                   })}
                   {selectedValues.length > maxCount && (
                     <Badge>
-                      <span>{`+ ${
-                        selectedValues.length - maxCount
-                      } more`}</span>
+                      <span>{`+ ${selectedValues.length - maxCount}`}</span>
 
                       <div
-                        className="ml-2 h-4 w-4 cursor-pointer"
+                        className="ml-2 size-4 cursor-pointer"
                         onClick={(event) => {
                           event.stopPropagation();
                           clearExtraOptions();
@@ -350,7 +348,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                   >
                     <div
                       className={cn(
-                        "mr-2 size-4 text-center rounded-[4px] border border-input shadow-xs transition-shadow outline-none",
+                        "mr-1 size-4 text-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
                         selectedValues.length === options.length
                           ? "bg-primary text-primary-foreground border-primary"
                           : "opacity-50 [&_svg]:invisible"
@@ -371,7 +369,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     >
                       <div
                         className={cn(
-                          "mr-2 size-4 text-center rounded-[4px] border border-input shadow-xs transition-shadow outline-none",
+                          "mr-1 size-4 text-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
                           isSelected
                             ? "bg-primary text-primary-foreground border-primary"
                             : "opacity-50 [&_svg]:invisible"
