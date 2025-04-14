@@ -17,7 +17,7 @@ export default function MultiAsyncSelectClient({ options }: Props) {
   const { isPending, data, error, reset, mutate } = useMutation({
     mutationFn: async (searchString: string) => {
       const res = await fetch(
-        `http://localhost:3000/api/city?keyword=${searchString}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/city?keyword=${searchString}`
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return res.json();
