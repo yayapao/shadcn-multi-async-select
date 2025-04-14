@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import Header from "@/components/internal/header";
+import QueryProvider from "@/components/provider/query";
 
 export const metadata: Metadata = {
   title: "multi-async select with shadcn/ui",
@@ -30,7 +31,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          {children}
+          <QueryProvider>{children}</QueryProvider>
           <Toaster position="top-center" />
         </ThemeProvider>
       </body>
