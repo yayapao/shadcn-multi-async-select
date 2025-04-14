@@ -15,10 +15,10 @@ export async function GET(request: Request) {
     const res = JSON.parse(data);
     // 如果有关键字，则过滤
     if (keyword) {
-      const cities = res.data.filter((item: { name: string }) =>
-        item.name.toLowerCase().includes(keyword.toLowerCase())
+      const cities = res.data.filter((item: { label: string }) =>
+        item.label.toLowerCase().includes(keyword.toLowerCase())
       );
-      return Response.json(cities);
+      return Response.json({ data: cities });
     }
     // 返回用户
     return Response.json(res);
