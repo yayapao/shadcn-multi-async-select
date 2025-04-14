@@ -1,13 +1,12 @@
 "use client";
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { XCircle, ChevronDown, XIcon, WandSparkles } from "lucide-react";
+import { ChevronDown, XIcon, WandSparkles, CheckIcon } from "lucide-react";
+import { MdClose } from "react-icons/md";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
@@ -25,38 +24,12 @@ import {
 import { useEffect, useRef } from "react";
 import { FadeLoader } from "react-spinners";
 
-/**
- * Variants for the multi-select component to handle different styles.
- * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
- */
-const selectVariants = cva(
-  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        secondary:
-          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
-
 interface Option {
   label: string;
   value: string; // should be unique, and not empty
 }
 
-interface Props
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof selectVariants> {
+interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * An array of objects to be displayed in the Select.Option.
    */
@@ -145,7 +118,6 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
       options,
       onValueChange,
       onSearch,
-      variant,
       defaultValue = [],
       placeholder = "Select options",
       clearText = "Clear",
@@ -265,43 +237,35 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                       option = options.find((option) => option.value === value);
                     }
                     return (
-                      <Badge
-                        key={value}
-                        className={cn(
-                          isAnimating ? "animate-bounce" : "",
-                          selectVariants({ variant })
-                        )}
-                        style={{ animationDuration: `${animation}s` }}
-                      >
-                        {option?.label}
-                        <XCircle
+                      <Badge key={value}>
+                        <span>{option?.label}</span>
+                        <div
                           className="ml-2 h-4 w-4 cursor-pointer"
                           onClick={(event) => {
-                            debugger;
                             event.stopPropagation();
                             toggleOption(value);
                           }}
-                        />
+                        >
+                          <MdClose />
+                        </div>
                       </Badge>
                     );
                   })}
                   {selectedValues.length > maxCount && (
-                    <Badge
-                      className={cn(
-                        "bg-transparent text-foreground border-foreground/1 hover:bg-transparent",
-                        isAnimating ? "animate-bounce" : "",
-                        selectVariants({ variant })
-                      )}
-                      style={{ animationDuration: `${animation}s` }}
-                    >
-                      {`+ ${selectedValues.length - maxCount} more`}
-                      <XCircle
+                    <Badge>
+                      <span>{`+ ${
+                        selectedValues.length - maxCount
+                      } more`}</span>
+
+                      <div
                         className="ml-2 h-4 w-4 cursor-pointer"
                         onClick={(event) => {
                           event.stopPropagation();
                           clearExtraOptions();
                         }}
-                      />
+                      >
+                        <MdClose />
+                      </div>
                     </Badge>
                   )}
                 </div>
@@ -384,9 +348,16 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     onSelect={toggleAll}
                     className="cursor-pointer"
                   >
-                    <Checkbox
-                      checked={selectedValues.length === options.length}
-                    />
+                    <div
+                      className={cn(
+                        "mr-2 size-4 text-center rounded-[4px] border border-input shadow-xs transition-shadow outline-none",
+                        selectedValues.length === options.length
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "opacity-50 [&_svg]:invisible"
+                      )}
+                    >
+                      <CheckIcon className="size-3.5 text-white dark:text-black" />
+                    </div>
                     <span>Select all</span>
                   </CommandItem>
                 )}
@@ -398,7 +369,16 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                       onSelect={() => toggleOption(option.value)}
                       className="cursor-pointer"
                     >
-                      <Checkbox checked={isSelected} />
+                      <div
+                        className={cn(
+                          "mr-2 size-4 text-center rounded-[4px] border border-input shadow-xs transition-shadow outline-none",
+                          isSelected
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "opacity-50 [&_svg]:invisible"
+                        )}
+                      >
+                        <CheckIcon className="size-3.5 text-white dark:text-black" />
+                      </div>
                       <span>{option.label}</span>
                     </CommandItem>
                   );
