@@ -8,7 +8,7 @@ import QueryProvider from "@/components/provider/query";
 export const metadata: Metadata = {
   title: "multi-async select with shadcn/ui",
   description:
-    "A multi-select component which support async fetching data built with shadcn/ui.",
+    "An async data-loading multi-select component built with React & Next.js & shadcn/ui",
 };
 
 export default function RootLayout({
