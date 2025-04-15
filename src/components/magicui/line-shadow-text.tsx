@@ -2,21 +2,22 @@
 
 import { cn } from "@/lib/utils";
 import { motion, MotionProps } from "motion/react";
+import { useTheme } from "next-themes";
 
 interface LineShadowTextProps
   extends Omit<React.HTMLAttributes<HTMLElement>, keyof MotionProps>,
     MotionProps {
-  shadowColor?: string;
   as?: React.ElementType;
 }
 
 export function LineShadowText({
   children,
-  shadowColor = "black",
   className,
   as: Component = "span",
   ...props
 }: LineShadowTextProps) {
+  const { theme } = useTheme();
+  const shadowColor = theme === "dark" ? "white" : "black";
   const MotionComponent = motion.create(Component);
   const content = typeof children === "string" ? children : null;
 
