@@ -44,9 +44,27 @@ export default function MultiAsyncSelectClient({ options }: Props) {
         </TabsList>
         <TabsContent value="async">
           <div>
-            <h5 className="text-sm font-medium mb-2">
+            <h5 className="text-sm font-medium mb-4">
               Async data-loading multi-select, support search & debounce, built
-              with shadcn/ui popover, command, and more.
+              with shadcn/ui{" "}
+              <a
+                href="https://ui.shadcn.com/docs/components/popover"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Popover
+              </a>
+              ,{" "}
+              <a
+                href="https://ui.shadcn.com/docs/components/command"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Command
+              </a>
+              , and more.
             </h5>
             <MultiAsyncSelect
               loading={isPending}
@@ -61,8 +79,8 @@ export default function MultiAsyncSelectClient({ options }: Props) {
         </TabsContent>
         <TabsContent value="sync">
           <div>
-            <h5 className="text-sm font-medium mb-2">
-              Also support multiple select only
+            <h5 className="text-sm font-medium mb-4">
+              Sync multi-select is also supported.
             </h5>
             <MultiAsyncSelect
               options={options}
