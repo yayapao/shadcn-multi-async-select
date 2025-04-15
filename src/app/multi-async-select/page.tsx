@@ -13,7 +13,15 @@ export default async function MultiAsyncSelectPage() {
         </h1>
       </div>
       <div className="text-balance text-lg">
-        An async data-loading multi-select component built with shadcn/ui.
+        An async data-loading multi-select component built with{" "}
+        <a
+          href="https://ui.shadcn.com/"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          shadcn/ui.
+        </a>
       </div>
       <div className="w-full">
         <MultiAsyncSelectClient options={cities.data} />
