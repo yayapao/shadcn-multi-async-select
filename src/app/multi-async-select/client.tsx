@@ -34,7 +34,7 @@ export default function MultiAsyncSelectClient({ options }: Props) {
   }, 500);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 items-center justify-center">
       <div>
         <h5 className="text-sm font-medium mb-2">Async-Multi</h5>
         <MultiAsyncSelect
