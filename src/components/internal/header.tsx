@@ -1,5 +1,6 @@
 import ModeToggle from "@/components/internal/mode-toggle";
 import Logo from "./logo";
+import GithubButton from "./github";
 
 const Header = () => {
   return (
@@ -11,6 +12,7 @@ const Header = () => {
         <Logo />
       </div>
       <div className="flex items-center gap-6">
+        <GithubButton />
         <ModeToggle />
       </div>
     </header>
