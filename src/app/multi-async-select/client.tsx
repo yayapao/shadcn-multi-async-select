@@ -4,8 +4,9 @@ import { MultiAsyncSelect } from "@/components/open-source/multi-async-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMutation } from "@tanstack/react-query";
 import { useDebouncedCallback } from "use-debounce";
+import SelectForm from "./_atom/select-form";
 
-interface Option {
+export interface Option {
   label: string;
   value: string; // should be unique, and not empty
 }
@@ -92,6 +93,7 @@ export default function MultiAsyncSelectClient({ options }: Props) {
         <TabsContent value="form">
           <div>
             <h5 className="text-sm font-medium mb-2">Form</h5>
+            <SelectForm />
           </div>
         </TabsContent>
       </Tabs>
