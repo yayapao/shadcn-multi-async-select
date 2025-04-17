@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { ChevronDown, XIcon, WandSparkles, CheckIcon } from "lucide-react";
+import { ChevronDown, XIcon, CheckIcon } from "lucide-react";
 import { MdClose } from "react-icons/md";
 
 import { cn } from "@/lib/utils";
@@ -63,10 +63,10 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   placeholder?: string;
 
   /**
-   * Animation duration in seconds for the visual effects (e.g., bouncing badges).
-   * Optional, defaults to 0 (no animation).
+   * Placeholder text to be displayed when the search input is empty.
+   * Optional, defaults to "Search...".
    */
-  animation?: number;
+  searchPlaceholder?: string;
 
   /**
    * Maximum number of items to display. Extra selected items will be summarized.
@@ -120,9 +120,9 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
       onSearch,
       defaultValue = [],
       placeholder = "Select options",
+      searchPlaceholder = "Search...",
       clearText = "Clear",
       closeText = "Close",
-      animation = 0,
       maxCount = 3,
       modalPopover = false,
       className,
@@ -136,7 +136,6 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
-    const [isAnimating, setIsAnimating] = React.useState(false);
     const optionsRef = useRef<Record<string, Option>>({});
 
     const handleInputKeyDown = (
@@ -299,7 +298,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
         >
           <Command shouldFilter={!async}>
             <CommandInput
-              placeholder="Search..."
+              placeholder={searchPlaceholder}
               onValueChange={(value) => {
                 if (onSearch) {
                   onSearch(value);
@@ -410,15 +409,6 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
             </CommandList>
           </Command>
         </PopoverContent>
-        {animation > 0 && selectedValues.length > 0 && (
-          <WandSparkles
-            className={cn(
-              "cursor-pointer my-2 text-foreground bg-background w-3 h-3",
-              isAnimating ? "" : "text-gray-900"
-            )}
-            onClick={() => setIsAnimating(!isAnimating)}
-          />
-        )}
       </Popover>
     );
   }
