@@ -30,6 +30,8 @@ const AsyncSelectExample = () => {
       onValueChange={(value) => console.log(value)}
       className="w-[540px]"
       onSearch={handleSearch}
+      searchPlaceholder="async..."
+      placeholder="select city"
       async
     />
   );
