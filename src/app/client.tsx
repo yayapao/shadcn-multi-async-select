@@ -60,7 +60,7 @@ export default function MultiAsyncSelectClient({ options }: Props) {
         </TabsContent>
         <TabsContent value="form">
           <div>
-            <h5 className="text-sm font-medium mb-2">Form</h5>
+            <h5 className="text-sm font-medium mb-2">Form and async select</h5>
             <SelectFormExample />
           </div>
         </TabsContent>

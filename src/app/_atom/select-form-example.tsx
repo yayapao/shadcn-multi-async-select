@@ -13,6 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDebouncedCallback } from "use-debounce";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { GoFileCode } from "react-icons/go";
+import Link from "next/link";
 const formSchema = z.object({
   city: z.array(z.string()),
 });
@@ -48,41 +50,55 @@ const SelectFormExample = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Use with shadcn/ui Form</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <MultiAsyncSelect
-                      loading={isPending}
-                      error={error}
-                      options={data?.data || []}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="w-[500px]"
-                      onSearch={handleSearch}
-                      async
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end mt-4">
-              <Button type="submit">Submit</Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+    <div>
+      <div className="flex justify-end">
+        <Button className="cursor-pointer gap-0.5" variant="link">
+          <Link
+            href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_atom/select-form-example.tsx"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Code
+          </Link>
+          <GoFileCode />
+        </Button>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Use with shadcn/ui Form</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <MultiAsyncSelect
+                        loading={isPending}
+                        error={error}
+                        options={data?.data || []}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="w-[500px]"
+                        onSearch={handleSearch}
+                        async
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end mt-4">
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
