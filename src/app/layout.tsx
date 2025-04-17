@@ -6,9 +6,9 @@ import Header from "@/components/internal/header";
 import QueryProvider from "@/components/provider/query";
 
 export const metadata: Metadata = {
-  title: "multi-async select with shadcn/ui",
+  title: "multi async select with shadcn/ui",
   description:
-    "An async data-loading multi-select component built with React & Next.js & shadcn/ui",
+    "An async data-loading multi-select component built with React & Next.js & shadcn/ui.一款基于 shadcn/ui 支持异步多选的下拉框组件",
 };
 
 export default function RootLayout({
