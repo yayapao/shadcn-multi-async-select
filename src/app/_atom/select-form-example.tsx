@@ -17,7 +17,7 @@ const formSchema = z.object({
   city: z.array(z.string()),
 });
 
-const SelectForm = () => {
+const SelectFormExample = () => {
   const { isPending, data, error, reset, mutate } = useMutation({
     mutationFn: async (searchString: string) => {
       const res = await fetch(
@@ -86,4 +86,4 @@ const SelectForm = () => {
   );
 };
 
-export default SelectForm;
+export default SelectFormExample;
