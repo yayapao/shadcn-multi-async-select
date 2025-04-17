@@ -1,7 +1,7 @@
 import { LineShadowText } from "@/components/magicui/line-shadow-text";
 import MultiAsyncSelectClient from "./client";
 import { Button } from "@/components/ui/button";
-import { PiCopySimple } from "react-icons/pi";
+import { BiSolidCopyAlt } from "react-icons/bi";
 import Link from "next/link";
 
 export default async function MultiAsyncSelectPage() {
@@ -18,13 +18,13 @@ export default async function MultiAsyncSelectPage() {
       <div className="flex flex-col gap-4 justify-between">
         <Button variant="link" size="sm">
           <Link
-            className="flex flex-row items-center"
+            className="flex flex-row items-center gap-0.5"
             href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/components/open-source/multi-async-select.tsx"
             target="_blank"
             rel="noopener noreferrer"
           >
             Copy component
-            <PiCopySimple />
+            <BiSolidCopyAlt />
           </Link>
         </Button>
       </div>
