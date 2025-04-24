@@ -60,7 +60,10 @@ export default function MultiAsyncSelectClient({ options }: Props) {
         </TabsContent>
         <TabsContent value="form">
           <div>
-            <h5 className="text-sm font-medium mb-2">Form and async select</h5>
+            <h5 className="text-sm font-medium mb-2">
+              Use with shadcn/ui Form. If you need to support initial value,
+              please set default options in the component.
+            </h5>
             <SelectFormExample
               formData={{ city: ["New York", "Los Angeles"] }}
             />

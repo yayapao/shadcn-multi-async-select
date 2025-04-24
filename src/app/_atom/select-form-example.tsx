@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   FormControl,
   FormItem,
@@ -79,9 +79,6 @@ const SelectFormExample = ({ formData }: Props) => {
         </Button>
       </div>
       <Card>
-        <CardHeader>
-          <CardTitle>Use with shadcn/ui Form</CardTitle>
-        </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

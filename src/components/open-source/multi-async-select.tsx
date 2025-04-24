@@ -251,7 +251,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                       option = options.find((option) => option.value === value);
                     }
                     return (
-                      <Badge key={value}>
+                      <Badge key={value} variant="outline">
                         <span>{option?.label}</span>
                         <div
                           className="ml-2 size-4 cursor-pointer"
@@ -266,9 +266,8 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     );
                   })}
                   {selectedValues.length > maxCount && (
-                    <Badge>
+                    <Badge variant="outline">
                       <span>{`+ ${selectedValues.length - maxCount}`}</span>
-
                       <div
                         className="ml-2 size-4 cursor-pointer"
                         onClick={(event) => {
@@ -314,7 +313,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
           <Command shouldFilter={!async}>
             <CommandInput
               placeholder={searchPlaceholder}
-              onValueChange={(value) => {
+              onValueChange={(value: string) => {
                 if (onSearch) {
                   onSearch(value);
                 }
@@ -362,7 +361,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                   >
                     <div
                       className={cn(
-                        "mr-1 size-4 text-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
+                        "mr-1 size-4 flex items-center justify-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
                         selectedValues.length === options.length
                           ? "bg-primary text-primary-foreground border-primary"
                           : "opacity-50 [&_svg]:invisible"
@@ -383,7 +382,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     >
                       <div
                         className={cn(
-                          "mr-1 size-4 text-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
+                          "mr-1 size-4 flex items-center justify-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
                           isSelected
                             ? "bg-primary text-primary-foreground border-primary"
                             : "opacity-50 [&_svg]:invisible"
