@@ -136,7 +136,11 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+    const [reserveOptions, setReserveOptions] = React.useState<
+      Record<string, Option>
+    >({});
     const optionsRef = useRef<Record<string, Option>>({});
+    const isInit = useRef(false);
 
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement>
@@ -194,18 +198,29 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
         return acc;
       }, {} as Record<string, Option>);
       if (async) {
-        // 当 options 变化时，仅保留上一次 selectedValues 中存在的选项
-        const temp2 = selectedValues.reduce((acc, value) => {
-          const option = optionsRef.current[value];
-          if (option) {
-            acc[option.value] = option;
-          }
-          return acc;
-        }, {} as Record<string, Option>);
-        optionsRef.current = {
-          ...temp,
-          ...temp2,
-        };
+        // 初始化时，使用 options 来生成 optionsRef
+        if (!isInit.current) {
+          optionsRef.current = temp;
+          setReserveOptions(temp);
+          isInit.current = true;
+        } else {
+          // 当 options 变化时，仅保留上一次 selectedValues 中存在的选项
+          const temp2 = selectedValues.reduce((acc, value) => {
+            const option = optionsRef.current[value];
+            if (option) {
+              acc[option.value] = option;
+            }
+            return acc;
+          }, {} as Record<string, Option>);
+          optionsRef.current = {
+            ...temp,
+            ...temp2,
+          };
+          setReserveOptions({
+            ...temp,
+            ...temp2,
+          });
+        }
       }
     }, [options]);
 
@@ -221,7 +236,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
             {...props}
             onClick={handleTogglePopover}
             className={cn(
-              "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-white hover:bg-transparent focus:outline-none focus:ring-1 focus:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 dark:border-zinc-800 dark:ring-offset-zinc-950 dark:focus:ring-zinc-300 dark:bg-black dark:hover:bg-black [&_svg]:pointer-events-auto",
+              "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-[12px] shadow-sm ring-offset-white hover:bg-transparent focus:outline-none focus:ring-1 focus:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 dark:border-zinc-800 dark:ring-offset-zinc-950 dark:focus:ring-zinc-300 dark:bg-black dark:hover:bg-black [&_svg]:pointer-events-auto",
               className
             )}
           >
@@ -231,7 +246,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                   {selectedValues.slice(0, maxCount).map((value) => {
                     let option: Option | undefined;
                     if (async) {
-                      option = optionsRef.current[value];
+                      option = reserveOptions[value];
                     } else {
                       option = options.find((option) => option.value === value);
                     }
@@ -283,7 +298,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
               </div>
             ) : (
               <div className="flex items-center justify-between w-full mx-auto">
-                <span className="text-sm font-normal text-zinc-500">
+                <span className="text-[12px] font-normal text-zinc-500">
                   {placeholder}
                 </span>
                 <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500" />
@@ -328,7 +343,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                 !loading &&
                 !error &&
                 options.length === 0 && (
-                  <div className="pt-6 pb-4 text-center text-sm">
+                  <div className="pt-6 pb-4 text-center text-[12px]">
                     {`No ${placeholder.toLowerCase()} found.`}
                   </div>
                 )
