@@ -61,7 +61,9 @@ export default function MultiAsyncSelectClient({ options }: Props) {
         <TabsContent value="form">
           <div>
             <h5 className="text-sm font-medium mb-2">Form and async select</h5>
-            <SelectFormExample />
+            <SelectFormExample
+              formData={{ city: ["New York", "Los Angeles"] }}
+            />
           </div>
         </TabsContent>
       </Tabs>

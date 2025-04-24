@@ -24,7 +24,7 @@ import {
 import { useEffect, useRef } from "react";
 import { FadeLoader } from "react-spinners";
 
-interface Option {
+export interface Option {
   label: string;
   value: string; // should be unique, and not empty
 }
