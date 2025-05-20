@@ -207,7 +207,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
           ...temp2,
         };
       }
-    }, [options]);
+    }, [options, options, selectedValues]);
 
     return (
       <Popover
