@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function HomeHeader() {
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-center">
         <h1 className="text-balance text-[36px] font-semibold leading-none tracking-tighter">
           <LineShadowText className="italic pl-2">
             Multi Async Select
