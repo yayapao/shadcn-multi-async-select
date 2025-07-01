@@ -1,7 +1,7 @@
 "use client";
 import { useMutation } from "@tanstack/react-query";
 import { useDebouncedCallback } from "use-debounce";
-import { MultiAsyncSelect } from "@/components/open-source/multi-async-select";
+import { MultiAsyncSelect } from "@/components/open/multi-async-select";
 import { Button } from "@/components/ui/button";
 import { GoFileCode } from "react-icons/go";
 import Link from "next/link";

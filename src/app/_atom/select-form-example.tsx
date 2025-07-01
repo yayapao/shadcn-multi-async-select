@@ -6,7 +6,7 @@ import {
   FormField,
 } from "@/components/ui/form";
 import { Form } from "@/components/ui/form";
-import { MultiAsyncSelect } from "@/components/open-source/multi-async-select";
+import { MultiAsyncSelect } from "@/components/open/multi-async-select";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

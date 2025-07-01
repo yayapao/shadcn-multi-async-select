@@ -1,4 +1,4 @@
-import { MultiAsyncSelect } from "@/components/open-source/multi-async-select";
+import { MultiAsyncSelect } from "@/components/open/multi-async-select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { GoFileCode } from "react-icons/go";
