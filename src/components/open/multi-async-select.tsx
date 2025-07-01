@@ -115,7 +115,11 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
    * Custom label function.
    * Optional, defaults to null.
    */
-  labelFunc?: (option: Option) => React.ReactNode;
+  labelFunc?: (
+    option: Option,
+    isSelected: boolean,
+    index: number
+  ) => React.ReactNode;
 
   /**
    * Callback function triggered when the selected values change.
@@ -274,14 +278,14 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
                     }
                     return (
                       <div
-                        className="h-[28px] flex items-center gap-1 rounded-md px-2 py-0.5 border border-zinc-200"
+                        className="h-[26px] flex items-center gap-1 rounded-md px-2 py-0.5 border border-zinc-200 text-zinc-600 hover:text-primary dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-primary hover:border-zinc-400 dark:hover:border-zinc-600"
                         key={value}
                       >
-                        <div className="flex items-center gap-1 truncate text-xs">
+                        <div className="flex items-center gap-1 truncate text-xs max-w-[100px] ">
                           {option?.label}
                         </div>
                         <X
-                          className="ml-2 h-3 w-3 p-1 box-content shrink-0 cursor-pointer text-zinc-500 hover:bg-zinc-100 rounded-full dark:hover:bg-zinc-800"
+                          className=" h-3 w-3 p-1 box-content shrink-0 cursor-pointer text-zinc-500 hover:bg-zinc-100 rounded-full dark:hover:bg-zinc-800"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
@@ -294,7 +298,7 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
                     <Badge variant="outline">
                       <span>{`+ ${selectedValues.length - maxCount}`}</span>
                       <X
-                        className="ml-2 h-3 w-3 p-1 box-content shrink-0 cursor-pointer text-zinc-500 hover:bg-zinc-100 rounded-full dark:hover:bg-zinc-800"
+                        className="ml-2 h-3 w-3 p-1 box-content shrink-0 cursor-pointer text-zinc-300 dark:text-zinc-500 hover:bg-zinc-100 hover:text-primary rounded-full dark:hover:bg-zinc-800"
                         onClick={(event) => {
                           event.stopPropagation();
                           clearExtraOptions();
@@ -305,7 +309,7 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
                 </div>
                 <div className="flex items-center justify-between">
                   <X
-                    className="ml-2 h-4 w-4 p-1 box-content shrink-0 cursor-pointer text-zinc-500 hover:bg-zinc-100 rounded-full dark:hover:bg-zinc-800"
+                    className="ml-2 h-4 w-4 p-1 box-content shrink-0 cursor-pointer text-zinc-300 dark:text-zinc-500 hover:bg-zinc-100 hover:text-primary rounded-full dark:hover:bg-zinc-800"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleClear();
@@ -315,7 +319,7 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
                     orientation="vertical"
                     className="flex min-h-6 h-full mx-2"
                   />
-                  <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500" />
+                  <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500 hover:text-primary" />
                 </div>
               </div>
             ) : (
@@ -366,7 +370,7 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
                 !loading &&
                 !error &&
                 options.length === 0 && (
-                  <div className="pt-6 pb-4 text-center text-[12px]">
+                  <div className="pt-6 pb-4 text-center text-xs">
                     {`No result found.`}
                   </div>
                 )
@@ -394,13 +398,13 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
                     <span>Select all</span>
                   </CommandItem>
                 )}
-                {options.map((option) => {
+                {options.map((option, index) => {
                   const isSelected = selectedValues.includes(option.value);
                   return (
                     <CommandItem
                       key={option.value}
                       onSelect={() => toggleOption(option.value)}
-                      className="cursor-pointer"
+                      className="cursor-pointer text-xs"
                     >
                       <div
                         className={cn(
@@ -414,7 +418,7 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
                       </div>
                       <>
                         {labelFunc ? (
-                          labelFunc(option)
+                          labelFunc(option, isSelected, index)
                         ) : (
                           <span>{option.label}</span>
                         )}
