@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/command";
 import { useEffect, useImperativeHandle, useRef } from "react";
 import { FadeLoader } from "react-spinners";
+import { PopoverContentProps } from "@radix-ui/react-popover";
 
 export interface Option {
   label: string;
@@ -100,16 +101,19 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   closeText?: string;
 
   /**
-   * Whether to use portal to render the popover content.
-   * Optional, defaults to true.
-   */
-  portal?: boolean;
-
-  /**
    * Whether to hide the select all option.
    * Optional, defaults to false.
    */
   hideSelectAll?: boolean;
+
+  /**
+   * Additional options for the popover content.
+   * Optional, defaults to null.
+   * portal: Whether to use portal to render the popover content. !!!need to modify the popover component!!!
+   */
+  popoverOptions?: PopoverContentProps & {
+    portal?: boolean;
+  };
 
   /**
    * Custom label function.
@@ -155,8 +159,8 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
       loading = false,
       async = false,
       error = null,
-      portal = true,
       hideSelectAll = false,
+      popoverOptions,
       labelFunc,
     },
     ref
@@ -333,10 +337,13 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
           </div>
         </PopoverTrigger>
         <PopoverContent
-          portal={portal}
-          className="w-auto p-0"
-          align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
+          {...{
+            ...popoverOptions,
+            className: cn("w-auto p-0", popoverOptions?.className),
+            align: "start",
+            portal: popoverOptions?.portal,
+          }}
         >
           <Command shouldFilter={!async}>
             <CommandInput
