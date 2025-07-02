@@ -5,6 +5,7 @@ import { MultiAsyncSelect } from "@/components/open/multi-async-select";
 import { Button } from "@/components/ui/button";
 import { GoFileCode } from "react-icons/go";
 import Link from "next/link";
+import ComponentContainer from "@/components/yaui/component-container";
 
 const AsyncSelectExample = () => {
   const { isPending, data, error, reset, mutate } = useMutation({
@@ -43,21 +44,20 @@ const AsyncSelectExample = () => {
           <GoFileCode />
         </Button>
       </div>
-      <div className="h-[300px] flex items-center justify-center border border-zinc-200 rounded-md">
-        <div className="w-[480px]">
-          <MultiAsyncSelect
-            loading={isPending}
-            error={error}
-            options={data?.data || []}
-            onValueChange={(value) => console.log(value)}
-            onSearch={handleSearch}
-            searchPlaceholder="async search..."
-            placeholder="Select city"
-            maxCount={3}
-            async
-          />
-        </div>
-      </div>
+      <ComponentContainer>
+        <MultiAsyncSelect
+          loading={isPending}
+          error={error}
+          options={data?.data || []}
+          onValueChange={(value) => console.log(value)}
+          onSearch={handleSearch}
+          className="w-[480px]"
+          searchPlaceholder="async search..."
+          placeholder="Select city"
+          maxCount={3}
+          async
+        />
+      </ComponentContainer>
     </div>
   );
 };

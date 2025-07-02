@@ -146,9 +146,8 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
   (
     {
       options,
-      onValueChange,
-      onSearch,
       value,
+      className,
       defaultValue = [],
       placeholder = "Select...",
       searchPlaceholder = "Search...",
@@ -162,6 +161,8 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
       hideSelectAll = false,
       popoverOptions,
       labelFunc,
+      onValueChange,
+      onSearch,
     },
     ref
   ) => {
@@ -269,7 +270,12 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
         modal={modalPopover}
       >
         <PopoverTrigger asChild>
-          <div className="cursor-pointer flex h-auto min-h-[36px] w-full min-w-[160px] items-center justify-between rounded-md border border-input bg-background px-2 py-0.5 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+          <div
+            className={cn(
+              "cursor-pointer flex h-auto min-h-[36px] w-full min-w-[160px] items-center justify-between rounded-md border border-input bg-background px-2 py-0.5 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+              className
+            )}
+          >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-wrap items-center gap-1 overflow-x-auto">

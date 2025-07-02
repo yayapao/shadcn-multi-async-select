@@ -34,7 +34,7 @@ const SyncSelectExample = ({ options }: Props) => {
         This means the options are already loaded, and you may only want the
         multi-select.
       </div>
-      <div className="h-[300px] flex items-center justify-center border border-zinc-200 rounded-md">
+      <div className="h-[260px] flex items-center justify-center border border-zinc-200 rounded-md">
         <div className="w-[480px]">
           <MultiAsyncSelect
             options={options}

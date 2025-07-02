@@ -7,7 +7,7 @@ export default async function MultiAsyncSelectPage() {
   const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/city`);
   const cities = (await data.json()).data;
   return (
-    <div className="w-full max-w-8xl mx-auto flex flex-col gap-4 mt-16 pb-10 md:mt-24 justify-center items-center">
+    <div className="w-full max-w-8xl mx-auto flex flex-col gap-4 mt-12 pb-10 md:mt-20 justify-center items-center">
       <HomeHeader />
       <div className="flex flex-col gap-4 items-center justify-center">
         <Tabs defaultValue="example" className="w-[640px]">
