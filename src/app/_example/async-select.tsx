@@ -28,7 +28,10 @@ const AsyncSelectExample = () => {
 
   return (
     <div>
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <div>
+          <h5 className="text-sm font-medium">Async & Multi-select</h5>
+        </div>
         <Button className="cursor-pointer gap-0.5" variant="link">
           <Link
             href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_atom/async-select-example.tsx"
@@ -40,17 +43,21 @@ const AsyncSelectExample = () => {
           <GoFileCode />
         </Button>
       </div>
-      <MultiAsyncSelect
-        loading={isPending}
-        error={error}
-        options={data?.data || []}
-        onValueChange={(value) => console.log(value)}
-        className="w-[540px]"
-        onSearch={handleSearch}
-        searchPlaceholder="async..."
-        placeholder="select city"
-        async
-      />
+      <div className="h-[300px] flex items-center justify-center border border-zinc-200 rounded-md">
+        <div className="w-[480px]">
+          <MultiAsyncSelect
+            loading={isPending}
+            error={error}
+            options={data?.data || []}
+            onValueChange={(value) => console.log(value)}
+            onSearch={handleSearch}
+            searchPlaceholder="async search..."
+            placeholder="Select city"
+            maxCount={3}
+            async
+          />
+        </div>
+      </div>
     </div>
   );
 };

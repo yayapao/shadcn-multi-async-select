@@ -150,7 +150,7 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
       onSearch,
       value,
       defaultValue = [],
-      placeholder = "Select options",
+      placeholder = "Select...",
       searchPlaceholder = "Search...",
       clearText = "Clear",
       closeText = "Close",
