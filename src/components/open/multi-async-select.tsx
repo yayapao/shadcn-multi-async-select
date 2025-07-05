@@ -1,11 +1,9 @@
 "use client";
-import * as React from "react";
-import { ChevronDown, XIcon, CheckIcon } from "lucide-react";
-import { MdClose } from "react-icons/md";
 
+import * as React from "react";
+import { ChevronDown, X, CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -21,10 +19,11 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { useEffect, useRef } from "react";
+import { useEffect, useImperativeHandle, useRef } from "react";
 import { FadeLoader } from "react-spinners";
+import { PopoverContentProps } from "@radix-ui/react-popover";
 
-interface Option {
+export interface Option {
   label: string;
   value: string; // should be unique, and not empty
 }
@@ -55,6 +54,12 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
   /** The default selected values when the component mounts. */
   defaultValue?: string[];
+
+  /**
+   * The selected values.
+   * Optional, defaults to undefined.
+   */
+  value?: string[];
 
   /**
    * Placeholder text to be displayed when no values are selected.
@@ -100,6 +105,43 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   closeText?: string;
 
   /**
+   * Whether to hide the select all option.
+   * Optional, defaults to false.
+   */
+  hideSelectAll?: boolean;
+
+  /**
+   * Whether to clear search input when popover closes.
+   * Optional, defaults to false.
+   */
+  clearSearchOnClose?: boolean;
+
+  /**
+   * Controlled search value. If provided, the component will use this value instead of internal state.
+   * Optional, defaults to undefined.
+   */
+  searchValue?: string;
+
+  /**
+   * Additional options for the popover content.
+   * Optional, defaults to null.
+   * portal: Whether to use portal to render the popover content. !!!need to modify the popover component!!!
+   */
+  popoverOptions?: PopoverContentProps & {
+    portal?: boolean;
+  };
+
+  /**
+   * Custom label function.
+   * Optional, defaults to null.
+   */
+  labelFunc?: (
+    option: Option,
+    isSelected: boolean,
+    index: number
+  ) => React.ReactNode;
+
+  /**
    * Callback function triggered when the selected values change.
    * Receives an array of the new selected values.
    */
@@ -112,31 +154,48 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onSearch?: (value: string) => void;
 }
 
-export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
+interface MultiAsyncSelectRef {
+  setIsPopoverOpen: (open: boolean) => void;
+  setSearchValue: (value: string) => void;
+}
+
+export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
   (
     {
       options,
-      onValueChange,
-      onSearch,
+      value,
+      className,
       defaultValue = [],
-      placeholder = "Select options",
+      placeholder = "Select...",
       searchPlaceholder = "Search...",
       clearText = "Clear",
       closeText = "Close",
       maxCount = 3,
       modalPopover = false,
-      className,
       loading = false,
       async = false,
       error = null,
-      ...props
+      hideSelectAll = false,
+      popoverOptions,
+      labelFunc,
+      onValueChange,
+      onSearch,
+      clearSearchOnClose = false,
+      searchValue,
     },
     ref
   ) => {
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+    const [searchValueState, setSearchValueState] = React.useState(
+      searchValue || ""
+    );
+    const [reserveOptions, setReserveOptions] = React.useState<
+      Record<string, Option>
+    >({});
     const optionsRef = useRef<Record<string, Option>>({});
+    const isInit = useRef(false);
 
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement>
@@ -167,10 +226,6 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
       onValueChange([]);
     };
 
-    const handleTogglePopover = () => {
-      setIsPopoverOpen((prev) => !prev);
-    };
-
     const clearExtraOptions = () => {
       const newSelectedValues = selectedValues.slice(0, maxCount);
       setSelectedValues(newSelectedValues);
@@ -194,81 +249,112 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
         return acc;
       }, {} as Record<string, Option>);
       if (async) {
-        // 当 options 变化时，仅保留上一次 selectedValues 中存在的选项
-        const temp2 = selectedValues.reduce((acc, value) => {
-          const option = optionsRef.current[value];
-          if (option) {
-            acc[option.value] = option;
-          }
-          return acc;
-        }, {} as Record<string, Option>);
-        optionsRef.current = {
-          ...temp,
-          ...temp2,
-        };
+        // 初始化时，使用 options 来生成 optionsRef
+        if (!isInit.current) {
+          optionsRef.current = temp;
+          setReserveOptions(temp);
+          isInit.current = true;
+        } else {
+          // 当 options 变化时，仅保留上一次 selectedValues 中存在的选项
+          const temp2 = selectedValues.reduce((acc, value) => {
+            const option = optionsRef.current[value];
+            if (option) {
+              acc[option.value] = option;
+            }
+            return acc;
+          }, {} as Record<string, Option>);
+          optionsRef.current = {
+            ...temp,
+            ...temp2,
+          };
+          setReserveOptions({
+            ...temp,
+            ...temp2,
+          });
+        }
       }
     }, [async, options, selectedValues]);
+
+    useEffect(() => {
+      if (value) {
+        setSelectedValues(value);
+      }
+    }, [value]);
+
+    useEffect(() => {
+      if (searchValue !== undefined) {
+        setSearchValueState(searchValue);
+      }
+    }, [searchValue]);
+
+    useImperativeHandle(ref, () => ({
+      setIsPopoverOpen,
+      setSearchValue: setSearchValueState,
+    }));
 
     return (
       <Popover
         open={isPopoverOpen}
-        onOpenChange={setIsPopoverOpen}
+        onOpenChange={(open) => {
+          setIsPopoverOpen(open);
+          if (!open && clearSearchOnClose) {
+            setSearchValueState("");
+            onSearch?.("");
+          }
+        }}
         modal={modalPopover}
       >
         <PopoverTrigger asChild>
-          <Button
-            ref={ref}
-            {...props}
-            onClick={handleTogglePopover}
+          <div
             className={cn(
-              "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-white hover:bg-transparent focus:outline-none focus:ring-1 focus:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 dark:border-zinc-800 dark:ring-offset-zinc-950 dark:focus:ring-zinc-300 dark:bg-black dark:hover:bg-black [&_svg]:pointer-events-auto",
+              "cursor-pointer flex h-auto min-h-[36px] w-full min-w-[160px] items-center justify-between rounded-md border border-input bg-background px-2 py-0.5 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
               className
             )}
           >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
-                <div className="flex flex-nowrap items-center gap-1 overflow-x-auto">
+                <div className="flex flex-wrap items-center gap-1 overflow-x-auto">
                   {selectedValues.slice(0, maxCount).map((value) => {
                     let option: Option | undefined;
                     if (async) {
-                      option = optionsRef.current[value];
+                      option = reserveOptions[value];
                     } else {
                       option = options.find((option) => option.value === value);
                     }
                     return (
-                      <Badge key={value}>
-                        <span>{option?.label}</span>
-                        <div
-                          className="ml-2 size-4 cursor-pointer"
+                      <div
+                        className="h-[26px] flex items-center gap-1 rounded-md px-2 py-0.5 border border-zinc-200 text-zinc-600 hover:text-primary dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-primary hover:border-zinc-400 dark:hover:border-zinc-600"
+                        key={value}
+                      >
+                        <div className="flex items-center gap-1 truncate text-xs max-w-[100px] ">
+                          {option?.label}
+                        </div>
+                        <X
+                          className=" h-3 w-3 p-1 box-content shrink-0 cursor-pointer text-zinc-500 hover:bg-zinc-100 rounded-full dark:hover:bg-zinc-800"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
                           }}
-                        >
-                          <MdClose />
-                        </div>
-                      </Badge>
+                        />
+                      </div>
                     );
                   })}
                   {selectedValues.length > maxCount && (
-                    <Badge>
+                    <Badge variant="outline">
                       <span>{`+ ${selectedValues.length - maxCount}`}</span>
-
-                      <div
-                        className="ml-2 size-4 cursor-pointer"
+                      <X
+                        className="ml-2 h-3 w-3 p-1 box-content shrink-0 cursor-pointer text-zinc-300 dark:text-zinc-500 hover:bg-zinc-100 hover:text-primary rounded-full dark:hover:bg-zinc-800"
                         onClick={(event) => {
                           event.stopPropagation();
                           clearExtraOptions();
                         }}
-                      >
-                        <MdClose />
-                      </div>
+                      />
                     </Badge>
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <XIcon
-                    className="h-4 cursor-pointer text-zinc-500"
+                  <X
+                    className="ml-2 h-4 w-4 p-1 box-content shrink-0 cursor-pointer text-zinc-300 dark:text-zinc-500 hover:bg-zinc-100 hover:text-primary rounded-full dark:hover:bg-zinc-800"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleClear();
@@ -278,28 +364,40 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     orientation="vertical"
                     className="flex min-h-6 h-full mx-2"
                   />
-                  <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500" />
+                  <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500 hover:text-primary" />
                 </div>
               </div>
             ) : (
               <div className="flex items-center justify-between w-full mx-auto">
-                <span className="text-sm font-normal text-zinc-500">
+                <span className="text-[12px] font-normal text-zinc-500">
                   {placeholder}
                 </span>
                 <ChevronDown className="h-4 cursor-pointer text-zinc-300 dark:text-zinc-500" />
               </div>
             )}
-          </Button>
+          </div>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0"
-          align="start"
-          onEscapeKeyDown={() => setIsPopoverOpen(false)}
+          onEscapeKeyDown={() => {
+            setIsPopoverOpen(false);
+            if (clearSearchOnClose) {
+              setSearchValueState("");
+              onSearch?.("");
+            }
+          }}
+          {...{
+            ...popoverOptions,
+            className: cn("w-auto p-0", popoverOptions?.className),
+            align: "start",
+            portal: popoverOptions?.portal,
+          }}
         >
           <Command shouldFilter={!async}>
             <CommandInput
               placeholder={searchPlaceholder}
-              onValueChange={(value) => {
+              value={searchValueState}
+              onValueChange={(value: string) => {
+                setSearchValueState(value);
                 if (onSearch) {
                   onSearch(value);
                 }
@@ -328,18 +426,16 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                 !loading &&
                 !error &&
                 options.length === 0 && (
-                  <div className="pt-6 pb-4 text-center text-sm">
-                    {`No ${placeholder.toLowerCase()} found.`}
+                  <div className="pt-6 pb-4 text-center text-xs">
+                    {`No result found.`}
                   </div>
                 )
               ) : (
-                <CommandEmpty>
-                  {`No ${placeholder.toLowerCase()} found.`}
-                </CommandEmpty>
+                <CommandEmpty>{`No result found.`}</CommandEmpty>
               )}
               <CommandGroup>
                 {/* 异步模式不需要全选 */}
-                {!async && (
+                {!async && !hideSelectAll && (
                   <CommandItem
                     key="all"
                     onSelect={toggleAll}
@@ -347,7 +443,7 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                   >
                     <div
                       className={cn(
-                        "mr-1 size-4 text-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
+                        "mr-1 size-4 flex items-center justify-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
                         selectedValues.length === options.length
                           ? "bg-primary text-primary-foreground border-primary"
                           : "opacity-50 [&_svg]:invisible"
@@ -358,17 +454,17 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                     <span>Select all</span>
                   </CommandItem>
                 )}
-                {options.map((option) => {
+                {options.map((option, index) => {
                   const isSelected = selectedValues.includes(option.value);
                   return (
                     <CommandItem
                       key={option.value}
                       onSelect={() => toggleOption(option.value)}
-                      className="cursor-pointer"
+                      className="cursor-pointer text-xs"
                     >
                       <div
                         className={cn(
-                          "mr-1 size-4 text-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
+                          "mr-1 size-4 flex items-center justify-center rounded-[4px] border border-primary shadow-xs transition-shadow outline-none",
                           isSelected
                             ? "bg-primary text-primary-foreground border-primary"
                             : "opacity-50 [&_svg]:invisible"
@@ -376,7 +472,13 @@ export const MultiAsyncSelect = React.forwardRef<HTMLButtonElement, Props>(
                       >
                         <CheckIcon className="size-3.5 text-white dark:text-black" />
                       </div>
-                      <span>{option.label}</span>
+                      <>
+                        {labelFunc ? (
+                          labelFunc(option, isSelected, index)
+                        ) : (
+                          <span>{option.label}</span>
+                        )}
+                      </>
                     </CommandItem>
                   );
                 })}

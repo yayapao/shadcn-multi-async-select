@@ -7,7 +7,7 @@ export default function Logo() {
   const { theme } = useTheme();
   return (
     <Image
-      src={theme === "dark" ? "/dark-logo.png" : "/light-logo.png"}
+      src={theme === "dark" ? "/dark-logo.png" : "/logo.png"}
       alt="logo"
       width={42}
       height={42}

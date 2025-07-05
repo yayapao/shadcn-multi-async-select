@@ -8,8 +8,9 @@ multi-async-select is a component that allows you to select multiple items from 
 
 ## Features
 
-- Multiple select
-- Async data fetching
+- Multiple Select
+- Async Data Fetching
+- Theme Toggle (Light/Dark)
 
 ## Props
 

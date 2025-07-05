@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   FormControl,
   FormItem,
@@ -6,7 +6,7 @@ import {
   FormField,
 } from "@/components/ui/form";
 import { Form } from "@/components/ui/form";
-import { MultiAsyncSelect } from "@/components/open-source/multi-async-select";
+import { MultiAsyncSelect } from "@/components/open/multi-async-select";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,18 +15,31 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { GoFileCode } from "react-icons/go";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 const formSchema = z.object({
   city: z.array(z.string()),
 });
 
-const SelectFormExample = () => {
-  const { isPending, data, error, reset, mutate } = useMutation({
+type Props = {
+  formData: {
+    city: string[];
+  };
+};
+
+const SelectFormExample = ({ formData }: Props) => {
+  const [cityList, setCityList] = useState<{ label: string; value: string }[]>(
+    []
+  );
+  const { isPending, error, reset, mutate } = useMutation({
     mutationFn: async (searchString: string) => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/city?keyword=${searchString}`
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return res.json();
+    },
+    onSuccess: (data) => {
+      setCityList(data.data);
     },
   });
 
@@ -40,14 +53,16 @@ const SelectFormExample = () => {
   }, 500);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      city: [],
-    },
+    defaultValues: formData,
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
   };
+
+  useEffect(() => {
+    setCityList(formData.city.map((city) => ({ label: city, value: city })));
+  }, [formData.city]);
 
   return (
     <div>
@@ -64,9 +79,6 @@ const SelectFormExample = () => {
         </Button>
       </div>
       <Card>
-        <CardHeader>
-          <CardTitle>Use with shadcn/ui Form</CardTitle>
-        </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -80,7 +92,7 @@ const SelectFormExample = () => {
                       <MultiAsyncSelect
                         loading={isPending}
                         error={error}
-                        options={data?.data || []}
+                        options={cityList}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="w-[500px]"

@@ -1,46 +1,32 @@
-import { LineShadowText } from "@/components/magicui/line-shadow-text";
-import MultiAsyncSelectClient from "./client";
-import { Button } from "@/components/ui/button";
-import { BiSolidCopyAlt } from "react-icons/bi";
-import Link from "next/link";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import HomeHeader from "./_atom/home-header";
+import Example from "./_atom/example";
+import DocumentPanel from "./_atom/document";
+import ApiDocs from "./_example/api-docs";
 
 export default async function MultiAsyncSelectPage() {
   const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/city`);
-  const cities = await data.json();
+  const cities = (await data.json()).data;
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col gap-4 mt-16 md:mt-24 justify-center items-center">
-      <div className="flex items-center justify-between">
-        <h1 className="text-balance text-[36px] font-semibold leading-none tracking-tighter">
-          Multi Async
-          <LineShadowText className="italic pl-2">Select</LineShadowText>
-        </h1>
-      </div>
-      <div className="flex flex-col gap-4 justify-between">
-        <Button variant="link" size="sm">
-          <Link
-            className="flex flex-row items-center gap-0.5"
-            href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/components/open-source/multi-async-select.tsx"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Copy component
-            <BiSolidCopyAlt />
-          </Link>
-        </Button>
-      </div>
-      <div className="text-balance text-lg">
-        An async data-loading multi-select component built with{" "}
-        <a
-          href="https://ui.shadcn.com/"
-          className="underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          shadcn/ui.
-        </a>
-      </div>
-      <div className="w-full">
-        <MultiAsyncSelectClient options={cities.data} />
+    <div className="mx-auto flex flex-col gap-4 mt-12 pb-10 md:mt-20 justify-center items-center">
+      <HomeHeader />
+      <div className="flex flex-col gap-4 items-center justify-center">
+        <Tabs defaultValue="example">
+          <TabsList className="grid w-full grid-cols-3 max-w-[660px] mx-auto">
+            <TabsTrigger value="example">Example</TabsTrigger>
+            <TabsTrigger value="document">Document</TabsTrigger>
+            <TabsTrigger value="api">Api</TabsTrigger>
+          </TabsList>
+          <TabsContent value="example" className="w-[760px]">
+            <Example options={cities} />
+          </TabsContent>
+          <TabsContent value="document" className="w-[760px]">
+            <DocumentPanel />
+          </TabsContent>
+          <TabsContent value="api" className="w-[860px]">
+            <ApiDocs />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
