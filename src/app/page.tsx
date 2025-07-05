@@ -14,11 +14,15 @@ export default async function MultiAsyncSelectPage() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="example">Example</TabsTrigger>
             <TabsTrigger value="document">Document</TabsTrigger>
+            <TabsTrigger value="api">Api</TabsTrigger>
           </TabsList>
           <TabsContent value="example">
             <Example options={cities} />
           </TabsContent>
           <TabsContent value="document">
+            <DocumentPanel />
+          </TabsContent>
+          <TabsContent value="api">
             <DocumentPanel />
           </TabsContent>
         </Tabs>

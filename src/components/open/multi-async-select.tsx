@@ -107,6 +107,18 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   hideSelectAll?: boolean;
 
   /**
+   * Whether to clear search input when popover closes.
+   * Optional, defaults to false.
+   */
+  clearSearchOnClose?: boolean;
+
+  /**
+   * Controlled search value. If provided, the component will use this value instead of internal state.
+   * Optional, defaults to undefined.
+   */
+  searchValue?: string;
+
+  /**
    * Additional options for the popover content.
    * Optional, defaults to null.
    * portal: Whether to use portal to render the popover content. !!!need to modify the popover component!!!
@@ -140,6 +152,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 interface MultiAsyncSelectRef {
   setIsPopoverOpen: (open: boolean) => void;
+  setSearchValue: (value: string) => void;
 }
 
 export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
@@ -163,12 +176,15 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
       labelFunc,
       onValueChange,
       onSearch,
+      clearSearchOnClose = false,
+      searchValue,
     },
     ref
   ) => {
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+    const [searchValueState, setSearchValueState] = React.useState(searchValue || "");
     const [reserveOptions, setReserveOptions] = React.useState<
       Record<string, Option>
     >({});
@@ -259,14 +275,27 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
       }
     }, [value]);
 
+    useEffect(() => {
+      if (searchValue !== undefined) {
+        setSearchValueState(searchValue);
+      }
+    }, [searchValue]);
+
     useImperativeHandle(ref, () => ({
       setIsPopoverOpen,
+      setSearchValue: setSearchValueState,
     }));
 
     return (
       <Popover
         open={isPopoverOpen}
-        onOpenChange={setIsPopoverOpen}
+        onOpenChange={(open) => {
+          setIsPopoverOpen(open);
+          if (!open && clearSearchOnClose) {
+            setSearchValueState("");
+            onSearch?.("");
+          }
+        }}
         modal={modalPopover}
       >
         <PopoverTrigger asChild>
@@ -343,7 +372,13 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
           </div>
         </PopoverTrigger>
         <PopoverContent
-          onEscapeKeyDown={() => setIsPopoverOpen(false)}
+          onEscapeKeyDown={() => {
+            setIsPopoverOpen(false);
+            if (clearSearchOnClose) {
+              setSearchValueState("");
+              onSearch?.("");
+            }
+          }}
           {...{
             ...popoverOptions,
             className: cn("w-auto p-0", popoverOptions?.className),
@@ -354,7 +389,9 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
           <Command shouldFilter={!async}>
             <CommandInput
               placeholder={searchPlaceholder}
+              value={searchValueState}
               onValueChange={(value: string) => {
+                setSearchValueState(value);
                 if (onSearch) {
                   onSearch(value);
                 }
