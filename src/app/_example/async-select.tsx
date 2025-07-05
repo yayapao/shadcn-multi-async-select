@@ -50,7 +50,7 @@ const AsyncSelectExample = () => {
         </Button>
       </div>
       <p className="text-sm text-gray-500 mb-4">
-        This example demonstrates how to use the MultiAsyncSelect component to select multiple cities from a list of options.
+        This example demonstrates <b>how to use the MultiAsyncSelect component and fetch the options from an API</b> to select multiple cities from a list of options.
       </p>
       <ComponentContainer>
         <div className="flex items-center mb-4 w-[480px]">
