@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 
