@@ -1,4 +1,5 @@
 import AsyncSelectExample from "../_example/async-select";
+import FormSelectExample from "../_example/form-select";
 import SyncSelectExample from "../_example/sync-select";
 
 interface Props {
@@ -13,6 +14,7 @@ export default function Example({ options }: Props) {
     <div className="flex flex-col gap-10 mt-4">
       <AsyncSelectExample />
       <SyncSelectExample options={options} />
+      <FormSelectExample />
     </div>
   );
 }
