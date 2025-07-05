@@ -22,7 +22,7 @@ const SyncSelectExample = ({ options }: Props) => {
         </div>
         <Button className="cursor-pointer gap-0.5" variant="link">
           <Link
-            href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_atom/async-select-example.tsx"
+            href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_example/sync-select.tsx"
             target="_blank"
             rel="noopener noreferrer"
           >
