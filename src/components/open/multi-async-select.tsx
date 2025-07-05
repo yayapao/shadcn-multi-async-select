@@ -55,6 +55,10 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** The default selected values when the component mounts. */
   defaultValue?: string[];
 
+  /**
+   * The selected values.
+   * Optional, defaults to undefined.
+   */
   value?: string[];
 
   /**
@@ -184,7 +188,9 @@ export const MultiAsyncSelect = React.forwardRef<MultiAsyncSelectRef, Props>(
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
-    const [searchValueState, setSearchValueState] = React.useState(searchValue || "");
+    const [searchValueState, setSearchValueState] = React.useState(
+      searchValue || ""
+    );
     const [reserveOptions, setReserveOptions] = React.useState<
       Record<string, Option>
     >({});
