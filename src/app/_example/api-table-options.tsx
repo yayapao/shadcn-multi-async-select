@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -153,11 +154,14 @@ export const columns: ColumnDef<ApiDocRow & { className?: string }>[] = [
     cell: ({ row }) => (
       <div
         className={cn(
-          "w-[120px] font-mono text-xs",
-          row.original.required && "text-red-500"
+          "w-fit font-mono text-xs text-blue-500 bg-blue-500/10",
+          row.original.required && "text-red-500 bg-red-500/10"
         )}
       >
         {row.original.name}
+        {row.original.required && (
+          <span className="text-xs text-red-500">*</span>
+        )}
       </div>
     ),
   },
@@ -165,7 +169,7 @@ export const columns: ColumnDef<ApiDocRow & { className?: string }>[] = [
     header: "Type",
     accessorKey: "type",
     cell: ({ row }) => (
-      <div className="max-w-[100px] whitespace-break-spaces break-words">
+      <div className="max-w-[120px] w-fit whitespace-break-spaces break-words font-mono text-xs text-zinc-500 bg-zinc-500/10">
         {row.original.type}
       </div>
     ),
