@@ -32,6 +32,7 @@ interface EnhancedOption extends Option {
   children?: EnhancedOption[];
 }
 
+// SelectSearch is a search input component with optional clear and create buttons
 const SelectSearch = React.forwardRef<
   HTMLInputElement,
   {
@@ -132,7 +133,7 @@ const SelectSearch = React.forwardRef<
 );
 SelectSearch.displayName = 'SelectSearch';
 
-// 创建新项目的表单组件
+// CreateItemForm is a form component for creating new items
 const CreateItemForm = ({
   searchValue,
   onCreate,
@@ -227,26 +228,34 @@ type Props = {
 const SelectContentPro = ({
   options,
   portal = true,
+  /** group start */
   groudKey,
-  children,
   groupLabel,
+  /** group end */
   labelFunc,
   hiddenFunc,
   onSearch,
+  /** create item start */
   onCreate,
   createButtonText,
   createPromptText,
   createHintText,
-  noResultsText = '没有找到结果',
-  autoFocusCreateInput = false, // 默认不自动聚焦
+  noResultsText = 'Not found results for ',
+  autoFocusCreateInput = false,
+  /** create item end */
+  children,
 }: Props) => {
   const [searchValue, setSearchValue] = useState('');
   const dataRef = useRef<EnhancedOption[]>(options);
   const [data, setData] = useState<EnhancedOption[]>(options);
+  // control whether there are visible items after filtering
+  // if not, show the create item form (if onCreate is provided)
   const [hasVisibleItems, setHasVisibleItems] = useState(true);
+  // control the visibility of the create item form
+  // using for button control
   const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
 
-  // 执行搜索操作
+  // handle search logic, using hidden property to control visibility
   const performSearch = useCallback(
     (value: string) => {
       if (groudKey) {
@@ -269,7 +278,6 @@ const SelectContentPro = ({
         });
 
         setData(temp);
-        // 检查是否有可见项
         const hasVisible = temp.some((item) => !item.hidden);
         setHasVisibleItems(hasVisible);
       } else {
@@ -283,7 +291,6 @@ const SelectContentPro = ({
           };
         });
         setData(temp);
-        // 检查是否有可见项
         const hasVisible = temp.some((item) => !item.hidden);
         setHasVisibleItems(hasVisible);
       }
@@ -291,10 +298,10 @@ const SelectContentPro = ({
     [groudKey, hiddenFunc]
   );
 
-  // 清除搜索
+  // clear search input and reset data
   const clearSearch = useCallback(() => {
     setSearchValue('');
-    // 重置搜索结果，显示所有选项
+    // reset search results and show all options
     const temp = dataRef.current.map((item: EnhancedOption) => {
       if (item.children) {
         item.children = item.children.map((child: EnhancedOption) => ({
@@ -308,10 +315,10 @@ const SelectContentPro = ({
     setHasVisibleItems(true);
   }, []);
 
-  // 切换创建表单的显示状态
+  // toggle create form visibility
   const toggleCreateForm = useCallback(() => {
     setIsCreateFormVisible((prev) => {
-      // 如果要隐藏创建表单，则重置搜索
+      // if hiding create form, reset search
       if (prev) {
         clearSearch();
       }
@@ -319,13 +326,12 @@ const SelectContentPro = ({
     });
   }, [clearSearch]);
 
-  // 处理搜索，当输入字符数 >= 2 才执行搜索
+  // handle search logic, only perform search when input length >= 2
   const handleSearch = useDebouncedCallback(
     (value: string) => {
       if (value.length >= 2 || value.length === 0) {
         performSearch(value);
       } else if (value.length === 1) {
-        // 当只有一个字符时，不执行搜索，但保留搜索值
         setSearchValue(value);
       }
     },
@@ -389,7 +395,6 @@ const SelectContentPro = ({
           children
         ) : (
           <>
-            {/* 当通过按钮显示创建表单时，隐藏列表项 */}
             {!isCreateFormVisible &&
               data.map((item: EnhancedOption) => {
                 if (groudKey && item.children) {
@@ -426,7 +431,6 @@ const SelectContentPro = ({
                 }
               })}
 
-            {/* 当创建表单可见或没有搜索结果时显示创建选项 */}
             {onCreate &&
               (isCreateFormVisible || (!hasVisibleItems && searchValue)) && (
                 <>
