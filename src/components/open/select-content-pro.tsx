@@ -1,5 +1,11 @@
 'use client';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   SelectContent,
@@ -11,17 +17,31 @@ import { MagnifyingGlassIcon, Cross2Icon } from '@radix-ui/react-icons';
 import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { debounce } from 'lodash';
+import { useDebouncedCallback } from 'use-debounce';
+import { cn } from '@/lib/utils';
+
+// Option interface to define the structure of selectable options
+interface Option {
+  label: string;
+  value: string | number;
+}
+
+// Enhanced option type with additional properties
+interface EnhancedOption extends Option {
+  hidden?: boolean;
+  children?: EnhancedOption[];
+}
 
 const SelectSearch = React.forwardRef<
-  any,
-  React.ComponentPropsWithoutRef<any> & {
+  HTMLInputElement,
+  {
     value?: string;
     onChange?: (value: string) => void;
     onClear?: () => void;
     showCreateButton?: boolean;
     onToggleCreate?: () => void;
     isCreateFormVisible?: boolean;
+    className?: string;
   }
 >(
   (
@@ -60,8 +80,13 @@ const SelectSearch = React.forwardRef<
       }
     };
 
+    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+
     return (
-      <div className="flex items-center border-b px-3">
+      <div
+        className={cn('flex items-center border-b px-3', className)}
+        {...props}
+      >
         <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
         <input
           ref={inputRef}
@@ -162,6 +187,7 @@ const CreateItemForm = ({
               handleCreate();
             }
           }}
+          autoFocus={autoFocus}
         />
         <Button
           size="sm"
@@ -178,15 +204,15 @@ const CreateItemForm = ({
 };
 
 type Props = {
-  options: { label: string; value: string | number }[];
+  options: Option[];
   portal?: boolean; // 是否使用 portal 渲染, 挂载到 body 上
   groudKey?: string; // 存在则展示为 group 分组
   children?: React.ReactNode;
   // 自定义分组标签渲染
-  groupLabel?: (item: any) => string | React.ReactNode;
+  groupLabel?: (item: EnhancedOption) => string | React.ReactNode;
   // 自定义选项标签渲染
-  labelFunc?: (item: any) => string | React.ReactNode;
-  hiddenFunc?: (item: any, value: string) => boolean;
+  labelFunc?: (item: EnhancedOption) => string | React.ReactNode;
+  hiddenFunc?: (item: EnhancedOption, value: string) => boolean;
   onSearch?: (value: string) => void;
   // 创建功能
   onCreate?: (name: string, clearSearch: () => void) => Promise<void>;
@@ -198,7 +224,7 @@ type Props = {
   autoFocusCreateInput?: boolean;
 };
 
-const YaSelectContentWrapper = ({
+const SelectContentPro = ({
   options,
   portal = true,
   groudKey,
@@ -215,8 +241,8 @@ const YaSelectContentWrapper = ({
   autoFocusCreateInput = false, // 默认不自动聚焦
 }: Props) => {
   const [searchValue, setSearchValue] = useState('');
-  const dataRef = useRef<any[]>(options);
-  const [data, setData] = useState<any[]>(options);
+  const dataRef = useRef<EnhancedOption[]>(options);
+  const [data, setData] = useState<EnhancedOption[]>(options);
   const [hasVisibleItems, setHasVisibleItems] = useState(true);
   const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
 
@@ -224,9 +250,9 @@ const YaSelectContentWrapper = ({
   const performSearch = useCallback(
     (value: string) => {
       if (groudKey) {
-        const temp = dataRef.current.map((item: any) => {
+        const temp = dataRef.current.map((item: EnhancedOption) => {
           if (item.children) {
-            item.children = item.children.map((child: any) => {
+            item.children = item.children.map((child: EnhancedOption) => {
               return {
                 ...child,
                 hidden:
@@ -236,7 +262,9 @@ const YaSelectContentWrapper = ({
               };
             });
           }
-          item.hidden = item.children.every((child: any) => child.hidden);
+          item.hidden = item.children
+            ? item.children.every((child) => child.hidden)
+            : false;
           return item;
         });
 
@@ -245,7 +273,7 @@ const YaSelectContentWrapper = ({
         const hasVisible = temp.some((item) => !item.hidden);
         setHasVisibleItems(hasVisible);
       } else {
-        const temp = dataRef.current.map((item) => {
+        const temp = dataRef.current.map((item: EnhancedOption) => {
           return {
             ...item,
             hidden:
@@ -267,9 +295,9 @@ const YaSelectContentWrapper = ({
   const clearSearch = useCallback(() => {
     setSearchValue('');
     // 重置搜索结果，显示所有选项
-    const temp = dataRef.current.map((item: any) => {
+    const temp = dataRef.current.map((item: EnhancedOption) => {
       if (item.children) {
-        item.children = item.children.map((child: any) => ({
+        item.children = item.children.map((child: EnhancedOption) => ({
           ...child,
           hidden: false,
         }));
@@ -292,29 +320,36 @@ const YaSelectContentWrapper = ({
   }, [clearSearch]);
 
   // 处理搜索，当输入字符数 >= 2 才执行搜索
-  const handleSearch = useCallback(
-    debounce((value: string) => {
+  const handleSearch = useDebouncedCallback(
+    (value: string) => {
       if (value.length >= 2 || value.length === 0) {
         performSearch(value);
       } else if (value.length === 1) {
         // 当只有一个字符时，不执行搜索，但保留搜索值
         setSearchValue(value);
       }
-    }, 250),
-    [performSearch]
+    },
+    250,
+    { maxWait: 1000 }
   );
 
   useEffect(() => {
     if (groudKey) {
-      const groupData: any = options.reduce((acc: any, item: any) => {
-        const group = item[groudKey];
-        if (!acc[group]) {
-          acc[group] = [];
-        }
-        acc[group].push(item);
-        return acc;
-      }, {});
-      const temp = Object.keys(groupData).map((key) => {
+      const groupData = options.reduce<Record<string, Option[]>>(
+        (acc, item) => {
+          const group = item[groudKey as keyof Option];
+          const groupKey = String(group);
+
+          if (!acc[groupKey]) {
+            acc[groupKey] = [];
+          }
+          acc[groupKey].push(item);
+          return acc;
+        },
+        {}
+      );
+
+      const temp: EnhancedOption[] = Object.keys(groupData).map((key) => {
         return {
           label: key,
           value: key,
@@ -322,106 +357,105 @@ const YaSelectContentWrapper = ({
           children: groupData[key],
         };
       });
+
       setData(temp);
       dataRef.current = temp;
     } else {
-      setData(options);
-      dataRef.current = options;
+      setData(options as EnhancedOption[]);
+      dataRef.current = options as EnhancedOption[];
     }
   }, [options, groudKey]);
 
   return (
-    <SelectContent
-      portal={portal}
-      searcher={
-        <SelectSearch
-          onChange={(value: string) => {
-            // controlled 模式下，onSearch 会控制搜索
-            if (onSearch) {
-              onSearch(value);
-            } else {
-              handleSearch(value);
-            }
-            setSearchValue(value);
-          }}
-          value={searchValue}
-          onClear={clearSearch}
-          showCreateButton={!!onCreate}
-          onToggleCreate={toggleCreateForm}
-          isCreateFormVisible={isCreateFormVisible}
-        />
-      }
-    >
-      {children ? (
-        children
-      ) : (
-        <>
-          {/* 当通过按钮显示创建表单时，隐藏列表项 */}
-          {!isCreateFormVisible &&
-            data.map((item: any) => {
-              if (groudKey && item.children) {
-                return (
-                  <SelectGroup key={item.value} hidden={item.hidden}>
-                    <SelectLabel className="bg-blue-50 text-primary font-bold dark:bg-black">
-                      {groupLabel ? groupLabel(item) : item.label}
-                    </SelectLabel>
-                    {item.children.map((child: any) => (
-                      <SelectItem
-                        key={child.value}
-                        value={child.value}
-                        hidden={child.hidden}
-                      >
-                        {typeof labelFunc === 'function'
-                          ? labelFunc(child)
-                          : child.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                );
-              } else {
-                return (
-                  <SelectItem
-                    key={item.value}
-                    value={item.value}
-                    hidden={item.hidden}
-                  >
-                    {typeof labelFunc === 'function'
-                      ? labelFunc(item)
-                      : item.label}
-                  </SelectItem>
-                );
-              }
-            })}
+    <>
+      <SelectSearch
+        onChange={(value: string) => {
+          // controlled 模式下，onSearch 会控制搜索
+          if (onSearch) {
+            onSearch(value);
+          } else {
+            handleSearch(value);
+          }
+          setSearchValue(value);
+        }}
+        value={searchValue}
+        onClear={clearSearch}
+        showCreateButton={!!onCreate}
+        onToggleCreate={toggleCreateForm}
+        isCreateFormVisible={isCreateFormVisible}
+      />
+      <SelectContent className={portal ? 'select-content-with-portal' : ''}>
+        {children ? (
+          children
+        ) : (
+          <>
+            {/* 当通过按钮显示创建表单时，隐藏列表项 */}
+            {!isCreateFormVisible &&
+              data.map((item: EnhancedOption) => {
+                if (groudKey && item.children) {
+                  return (
+                    <SelectGroup key={String(item.value)} hidden={item.hidden}>
+                      <SelectLabel className="bg-blue-50 text-primary font-bold dark:bg-black">
+                        {groupLabel ? groupLabel(item) : item.label}
+                      </SelectLabel>
+                      {item.children.map((child: EnhancedOption) => (
+                        <SelectItem
+                          key={String(child.value)}
+                          value={String(child.value)}
+                          hidden={child.hidden}
+                        >
+                          {typeof labelFunc === 'function'
+                            ? labelFunc(child)
+                            : child.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  );
+                } else {
+                  return (
+                    <SelectItem
+                      key={String(item.value)}
+                      value={String(item.value)}
+                      hidden={item.hidden}
+                    >
+                      {typeof labelFunc === 'function'
+                        ? labelFunc(item)
+                        : item.label}
+                    </SelectItem>
+                  );
+                }
+              })}
 
-          {/* 当创建表单可见或没有搜索结果时显示创建选项 */}
-          {onCreate &&
-            (isCreateFormVisible || (!hasVisibleItems && searchValue)) && (
-              <>
-                {!isCreateFormVisible && searchValue && (
-                  <div className="p-2 text-center text-sm text-gray-500">
-                    {noResultsText}
-                    {searchValue ? `"${searchValue}"` : ''}
-                  </div>
-                )}
-                <CreateItemForm
-                  searchValue={searchValue}
-                  onCreate={async (name) => {
-                    await onCreate(name, clearSearch);
-                    setIsCreateFormVisible(false); // 创建成功后隐藏创建表单
-                  }}
-                  createButtonText={createButtonText}
-                  createPromptText={
-                    isCreateFormVisible ? '创建新项目' : createPromptText
-                  }
-                  createHintText={createHintText}
-                  autoFocus={autoFocusCreateInput}
-                />
-              </>
-            )}
-        </>
-      )}
-    </SelectContent>
+            {/* 当创建表单可见或没有搜索结果时显示创建选项 */}
+            {onCreate &&
+              (isCreateFormVisible || (!hasVisibleItems && searchValue)) && (
+                <>
+                  {!isCreateFormVisible && searchValue && (
+                    <div className="p-2 text-center text-sm text-gray-500">
+                      {noResultsText}
+                      {searchValue ? `"${searchValue}"` : ''}
+                    </div>
+                  )}
+                  <CreateItemForm
+                    searchValue={searchValue}
+                    onCreate={async (name) => {
+                      await onCreate(name, clearSearch);
+                      setIsCreateFormVisible(false); // 创建成功后隐藏创建表单
+                    }}
+                    createButtonText={createButtonText}
+                    createPromptText={
+                      isCreateFormVisible ? '创建新项目' : createPromptText
+                    }
+                    createHintText={createHintText}
+                    autoFocus={autoFocusCreateInput}
+                  />
+                </>
+              )}
+          </>
+        )}
+      </SelectContent>
+    </>
   );
 };
 
-export { YaSelectContentWrapper };
+export { SelectContentPro };
