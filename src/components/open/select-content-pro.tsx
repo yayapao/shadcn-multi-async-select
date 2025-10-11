@@ -14,7 +14,6 @@ import {
   SelectLabel,
 } from '@/components/ui/select';
 import { MagnifyingGlassIcon, Cross2Icon } from '@radix-ui/react-icons';
-import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useDebouncedCallback } from 'use-debounce';
@@ -75,7 +74,7 @@ const SelectSearch = React.forwardRef<
         onChange('');
       }
 
-      // 聚焦回搜索框
+      // Focus back on the search input
       if (inputRef.current) {
         inputRef.current.focus();
       }
@@ -123,7 +122,7 @@ const SelectSearch = React.forwardRef<
               className="h-6 px-1.5 py-0"
               onClick={onToggleCreate}
             >
-              {isCreateFormVisible ? '取消' : '创建'}
+              {isCreateFormVisible ? 'cancel' : 'create'}
             </Button>
           )}
         </div>
@@ -137,10 +136,10 @@ SelectSearch.displayName = 'SelectSearch';
 const CreateItemForm = ({
   searchValue,
   onCreate,
-  createButtonText = '创建',
-  createPromptText = '未找到结果，是否创建新项目？',
-  createHintText = '您可以修改名称后点击创建，或按回车键快速创建',
-  autoFocus = false, // 默认不自动聚焦
+  createButtonText = 'Create',
+  createPromptText = 'No results found, would you like to create a new item?',
+  createHintText = 'You can modify the name and click create, or press Enter to create quickly',
+  autoFocus = false,
 }: {
   searchValue: string;
   onCreate: (name: string) => Promise<void>;
@@ -161,7 +160,7 @@ const CreateItemForm = ({
       await onCreate(name.trim());
       setName('');
     } catch (error) {
-      console.error('创建失败:', error);
+      console.error('Create failed:', error);
     } finally {
       setIsCreating(false);
     }
@@ -180,7 +179,7 @@ const CreateItemForm = ({
           ref={inputRef}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="输入名称"
+          placeholder="Enter name"
           className="flex-1"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -195,8 +194,7 @@ const CreateItemForm = ({
           onClick={handleCreate}
           disabled={isCreating || !name.trim()}
         >
-          <PlusCircle className="h-4 w-4 mr-1" />
-          {isCreating ? '创建中...' : createButtonText}
+          {isCreating ? 'Creating...' : createButtonText}
         </Button>
       </div>
       <div className="text-xs text-gray-500 mt-1">{createHintText}</div>
@@ -208,6 +206,7 @@ type Props = {
   options: Option[];
   portal?: boolean; // 是否使用 portal 渲染, 挂载到 body 上
   disableSearch?: boolean;
+  className?: string;
   groudKey?: string; // 存在则展示为 group 分组
   children?: React.ReactNode;
   // 自定义分组标签渲染
@@ -217,7 +216,7 @@ type Props = {
   hiddenFunc?: (item: EnhancedOption, value: string) => boolean;
   onSearch?: (value: string) => void;
   // 创建功能
-  onCreate?: (name: string, clearSearch: () => void) => Promise<void>;
+  onCreate?: (name: string, clearSearch: () => void) => Promise<void> | void;
   createButtonText?: string;
   createPromptText?: string;
   createHintText?: string;
@@ -230,6 +229,7 @@ const SelectContentPro = ({
   options,
   portal = true,
   disableSearch = false,
+  className,
   /** group start */
   groudKey,
   groupLabel,
@@ -242,7 +242,7 @@ const SelectContentPro = ({
   createButtonText,
   createPromptText,
   createHintText,
-  noResultsText = 'Not found results for ',
+  noResultsText = 'No result found',
   autoFocusCreateInput = false,
   /** create item end */
   children,
@@ -375,7 +375,7 @@ const SelectContentPro = ({
   }, [options, groudKey]);
 
   return (
-    <SelectContent portal={portal}>
+    <SelectContent portal={portal} className={className}>
       {!disableSearch && (
         <SelectSearch
           onChange={(value: string) => {
@@ -452,7 +452,9 @@ const SelectContentPro = ({
                   }}
                   createButtonText={createButtonText}
                   createPromptText={
-                    isCreateFormVisible ? '创建新项目' : createPromptText
+                    isCreateFormVisible
+                      ? 'Creating a new item...'
+                      : createPromptText
                   }
                   createHintText={createHintText}
                   autoFocus={autoFocusCreateInput}

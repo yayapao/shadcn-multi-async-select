@@ -1,4 +1,5 @@
 import SearcherExample from '../_example/searcher';
+import CreateItemExample from '../_example/create-item';
 
 const options = [
   { label: 'Son Goku', value: 'Son Goku' },
@@ -27,6 +28,7 @@ export default function Example() {
   return (
     <div className="flex flex-col gap-10 mt-4">
       <SearcherExample options={options} />
+      <CreateItemExample options={options} />
     </div>
   );
 }
