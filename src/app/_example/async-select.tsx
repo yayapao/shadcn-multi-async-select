@@ -1,21 +1,21 @@
-"use client";
-import { useMutation } from "@tanstack/react-query";
-import { useDebouncedCallback } from "use-debounce";
-import { MultiAsyncSelect } from "@/components/open/multi-async-select";
-import { Button } from "@/components/ui/button";
-import { GoFileCode } from "react-icons/go";
-import Link from "next/link";
-import ComponentContainer from "@/components/yaui/component-container";
-import { useState } from "react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+'use client';
+import { useMutation } from '@tanstack/react-query';
+import { useDebouncedCallback } from 'use-debounce';
+import { MultiAsyncSelect } from '@/components/open/multi-async-select';
+import { Button } from '@/components/ui/button';
+import { GoFileCode } from 'react-icons/go';
+import Link from 'next/link';
+import ComponentContainer from '@/components/yaui/component-container';
+import { useState } from 'react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { LucideAirplay, LucideAlarmClockCheck } from "lucide-react";
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { LucideAirplay, LucideAlarmClockCheck } from 'lucide-react';
 
 const AsyncSelectExample = () => {
   const [clearSearchOnClose, setClearSearchOnClose] = useState(false);
@@ -56,12 +56,12 @@ const AsyncSelectExample = () => {
           <GoFileCode />
         </Button>
       </div>
-      <p className="text-sm text-gray-500 mb-4">
-        This example demonstrates{" "}
-        <b>
+      <p className="text-sm text-gray-600 mb-4 dark:text-gray-400">
+        This example demonstrates{' '}
+        <b className="text-primary">
           how to use the MultiAsyncSelect component and fetch the options from
           an API
-        </b>{" "}
+        </b>{' '}
         to select multiple cities from a list of options.
       </p>
       <ComponentContainer>
@@ -125,8 +125,8 @@ const AsyncSelectExample = () => {
               ? (option, isSelected, index) => (
                   <div
                     className={cn(
-                      "flex items-center gap-x-1",
-                      isSelected && "text-blue-500"
+                      'flex items-center gap-x-1',
+                      isSelected && 'text-blue-500'
                     )}
                   >
                     {index % 2 ? (

@@ -1,7 +1,7 @@
-import { LineShadowText } from "@/components/magicui/line-shadow-text";
-import { Button } from "@/components/ui/button";
-import { BiSolidCopyAlt } from "react-icons/bi";
-import Link from "next/link";
+import { LineShadowText } from '@/components/magicui/line-shadow-text';
+import { Button } from '@/components/ui/button';
+import { BiSolidCopyAlt } from 'react-icons/bi';
+import Link from 'next/link';
 
 export default function HomeHeader() {
   return (
@@ -14,9 +14,9 @@ export default function HomeHeader() {
         </h1>
       </div>
       <div className="flex flex-col gap-4 justify-between">
-        <Button variant="link" size="sm">
+        <Button variant="link" size="lg">
           <Link
-            className="flex flex-row items-center gap-0.5"
+            className="flex flex-row items-center gap-1"
             href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/components/open/multi-async-select.tsx"
             target="_blank"
             rel="noopener noreferrer"
@@ -27,7 +27,7 @@ export default function HomeHeader() {
         </Button>
       </div>
       <div className="text-balance text-lg">
-        An async data-loading multi-select component built with{" "}
+        An async data-loading multi-select component built with{' '}
         <a
           href="https://ui.shadcn.com/"
           className="underline"

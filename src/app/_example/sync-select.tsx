@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { MultiAsyncSelect } from "@/components/open/multi-async-select";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { GoFileCode } from "react-icons/go";
-import ComponentContainer from "@/components/yaui/component-container";
+import { MultiAsyncSelect } from '@/components/open/multi-async-select';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { GoFileCode } from 'react-icons/go';
+import ComponentContainer from '@/components/yaui/component-container';
 
 interface Props {
   options: {
@@ -31,9 +31,10 @@ const SyncSelectExample = ({ options }: Props) => {
           <GoFileCode />
         </Button>
       </div>
-      <p className="text-sm text-gray-500 mb-4">
-        This example demonstrates how to use <b>the fetched options</b> to
-        select multiple cities from a list of options.
+      <p className="text-sm text-gray-600 mb-4 dark:text-gray-400">
+        This example demonstrates how to use{' '}
+        <b className="text-primary">the fetched options</b> to select multiple
+        cities from a list of options.
       </p>
       <ComponentContainer>
         <MultiAsyncSelect
