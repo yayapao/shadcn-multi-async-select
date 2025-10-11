@@ -1,15 +1,15 @@
-"use client";
-import { useMutation } from "@tanstack/react-query";
-import { useDebouncedCallback } from "use-debounce";
-import { MultiAsyncSelect } from "@/components/open/multi-async-select";
-import { Button } from "@/components/ui/button";
-import { GoFileCode } from "react-icons/go";
-import Link from "next/link";
-import ComponentContainer from "@/components/yaui/component-container";
-import { useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+'use client';
+import { useMutation } from '@tanstack/react-query';
+import { useDebouncedCallback } from 'use-debounce';
+import { MultiAsyncSelect } from '@/components/open/multi-async-select';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import ComponentContainer from '@/components/yaui/component-container';
+import ExampleContainer from '@/components/yaui/example';
+import { useState } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -17,8 +17,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { toast } from "sonner";
+} from '@/components/ui/form';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   cities: z.array(z.string()),
@@ -26,7 +26,7 @@ const formSchema = z.object({
 
 const FormSelectExample = () => {
   const [cities, setCities] = useState<{ label: string; value: string }[]>([
-    { label: "Paris", value: "PAR" },
+    { label: 'Paris', value: 'PAR' },
   ]);
   const { isPending, error, reset, mutate } = useMutation({
     mutationFn: async (searchString: string) => {
@@ -52,7 +52,7 @@ const FormSelectExample = () => {
 
   // set default value
   const initData = {
-    cities: ["PAR"],
+    cities: ['PAR'],
   };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,39 +60,29 @@ const FormSelectExample = () => {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    toast.success("Submit success", {
+    toast.success('Submit success', {
       description: JSON.stringify(data),
     });
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-xl font-bold">Using in Form</h2>
-        </div>
-        <Button className="cursor-pointer gap-0.5" variant="link">
+    <ExampleContainer
+      title="Using in Form"
+      link="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_example/form-select.tsx"
+      desc={
+        <>
+          This example demonstrates how to use the MultiAsyncSelect component in{' '}
           <Link
-            href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_example/form-select.tsx"
+            href="https://ui.shadcn.com/docs/components/form"
             target="_blank"
             rel="noopener noreferrer"
+            className="underline"
           >
-            Code
+            shadcn/ui Form.
           </Link>
-          <GoFileCode />
-        </Button>
-      </div>
-      <p className="text-sm text-gray-500 mb-4">
-        This example demonstrates how to use the MultiAsyncSelect component in{" "}
-        <Link
-          href="https://ui.shadcn.com/docs/components/form"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          shadcn/ui Form.
-        </Link>
-      </p>
+        </>
+      }
+    >
       <ComponentContainer>
         <Form {...form}>
           <form
@@ -133,7 +123,7 @@ const FormSelectExample = () => {
           </form>
         </Form>
       </ComponentContainer>
-    </div>
+    </ExampleContainer>
   );
 };
 
