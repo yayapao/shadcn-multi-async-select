@@ -207,6 +207,7 @@ const CreateItemForm = ({
 type Props = {
   options: Option[];
   portal?: boolean; // 是否使用 portal 渲染, 挂载到 body 上
+  disableSearch?: boolean;
   groudKey?: string; // 存在则展示为 group 分组
   children?: React.ReactNode;
   // 自定义分组标签渲染
@@ -228,6 +229,7 @@ type Props = {
 const SelectContentPro = ({
   options,
   portal = true,
+  disableSearch = false,
   /** group start */
   groudKey,
   groupLabel,
@@ -373,92 +375,93 @@ const SelectContentPro = ({
   }, [options, groudKey]);
 
   return (
-    <>
-      <SelectSearch
-        onChange={(value: string) => {
-          // controlled 模式下，onSearch 会控制搜索
-          if (onSearch) {
-            onSearch(value);
-          } else {
-            handleSearch(value);
-          }
-          setSearchValue(value);
-        }}
-        value={searchValue}
-        onClear={clearSearch}
-        showCreateButton={!!onCreate}
-        onToggleCreate={toggleCreateForm}
-        isCreateFormVisible={isCreateFormVisible}
-      />
-      <SelectContent className={portal ? 'select-content-with-portal' : ''}>
-        {children ? (
-          children
-        ) : (
-          <>
-            {!isCreateFormVisible &&
-              data.map((item: EnhancedOption) => {
-                if (groudKey && item.children) {
-                  return (
-                    <SelectGroup key={String(item.value)} hidden={item.hidden}>
-                      <SelectLabel className="bg-blue-50 text-primary font-bold dark:bg-black">
-                        {groupLabel ? groupLabel(item) : item.label}
-                      </SelectLabel>
-                      {item.children.map((child: EnhancedOption) => (
-                        <SelectItem
-                          key={String(child.value)}
-                          value={String(child.value)}
-                          hidden={child.hidden}
-                        >
-                          {typeof labelFunc === 'function'
-                            ? labelFunc(child)
-                            : child.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  );
-                } else {
-                  return (
-                    <SelectItem
-                      key={String(item.value)}
-                      value={String(item.value)}
-                      hidden={item.hidden}
-                    >
-                      {typeof labelFunc === 'function'
-                        ? labelFunc(item)
-                        : item.label}
-                    </SelectItem>
-                  );
-                }
-              })}
+    <SelectContent portal={portal}>
+      {!disableSearch && (
+        <SelectSearch
+          onChange={(value: string) => {
+            // call onSearch if provided
+            if (onSearch) {
+              onSearch(value);
+            } else {
+              handleSearch(value);
+            }
+            setSearchValue(value);
+          }}
+          value={searchValue}
+          onClear={clearSearch}
+          showCreateButton={!!onCreate}
+          onToggleCreate={toggleCreateForm}
+          isCreateFormVisible={isCreateFormVisible}
+        />
+      )}
 
-            {onCreate &&
-              (isCreateFormVisible || (!hasVisibleItems && searchValue)) && (
-                <>
-                  {!isCreateFormVisible && searchValue && (
-                    <div className="p-2 text-center text-sm text-gray-500">
-                      {noResultsText}
-                      {searchValue ? `"${searchValue}"` : ''}
-                    </div>
-                  )}
-                  <CreateItemForm
-                    searchValue={searchValue}
-                    onCreate={async (name) => {
-                      await onCreate(name, clearSearch);
-                      setIsCreateFormVisible(false); // 创建成功后隐藏创建表单
-                    }}
-                    createButtonText={createButtonText}
-                    createPromptText={
-                      isCreateFormVisible ? '创建新项目' : createPromptText
-                    }
-                    createHintText={createHintText}
-                    autoFocus={autoFocusCreateInput}
-                  />
-                </>
-              )}
-          </>
-        )}
-      </SelectContent>
-    </>
+      {children ? (
+        children
+      ) : (
+        <>
+          {!isCreateFormVisible &&
+            data.map((item: EnhancedOption) => {
+              if (groudKey && item.children) {
+                return (
+                  <SelectGroup key={String(item.value)} hidden={item.hidden}>
+                    <SelectLabel className="bg-blue-50 text-primary font-bold dark:bg-black">
+                      {groupLabel ? groupLabel(item) : item.label}
+                    </SelectLabel>
+                    {item.children.map((child: EnhancedOption) => (
+                      <SelectItem
+                        key={String(child.value)}
+                        value={String(child.value)}
+                        hidden={child.hidden}
+                      >
+                        {typeof labelFunc === 'function'
+                          ? labelFunc(child)
+                          : child.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                );
+              } else {
+                return (
+                  <SelectItem
+                    key={String(item.value)}
+                    value={String(item.value)}
+                    hidden={item.hidden}
+                  >
+                    {typeof labelFunc === 'function'
+                      ? labelFunc(item)
+                      : item.label}
+                  </SelectItem>
+                );
+              }
+            })}
+
+          {onCreate &&
+            (isCreateFormVisible || (!hasVisibleItems && searchValue)) && (
+              <>
+                {!isCreateFormVisible && searchValue && (
+                  <div className="p-2 text-center text-sm text-gray-500">
+                    {noResultsText}
+                    {searchValue ? `"${searchValue}"` : ''}
+                  </div>
+                )}
+                <CreateItemForm
+                  searchValue={searchValue}
+                  onCreate={async (name) => {
+                    await onCreate(name, clearSearch);
+                    setIsCreateFormVisible(false); // 创建成功后隐藏创建表单
+                  }}
+                  createButtonText={createButtonText}
+                  createPromptText={
+                    isCreateFormVisible ? '创建新项目' : createPromptText
+                  }
+                  createHintText={createHintText}
+                  autoFocus={autoFocusCreateInput}
+                />
+              </>
+            )}
+        </>
+      )}
+    </SelectContent>
   );
 };
 

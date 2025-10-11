@@ -2,10 +2,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 import { MultiAsyncSelect } from '@/components/open/multi-async-select';
-import { Button } from '@/components/ui/button';
-import { GoFileCode } from 'react-icons/go';
-import Link from 'next/link';
 import ComponentContainer from '@/components/yaui/component-container';
+import ExampleContainer from '@/components/yaui/example';
 import { useState } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -40,30 +38,20 @@ const AsyncSelectExample = () => {
   }, 100);
 
   return (
-    <div>
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-xl font-bold">Async & Multi-select</h2>
-        </div>
-        <Button className="cursor-pointer gap-0.5" variant="link">
-          <Link
-            href="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_example/async-select.tsx"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Code
-          </Link>
-          <GoFileCode />
-        </Button>
-      </div>
-      <p className="text-sm text-gray-600 mb-4 dark:text-gray-400">
-        This example demonstrates{' '}
-        <b className="text-primary">
-          how to use the MultiAsyncSelect component and fetch the options from
-          an API
-        </b>{' '}
-        to select multiple cities from a list of options.
-      </p>
+    <ExampleContainer
+      title="Async & Multi-select"
+      link="https://github.com/yayapao/shadcn-multi-async-select/blob/main/src/app/_example/async-select.tsx"
+      desc={
+        <>
+          This example demonstrates{' '}
+          <b className="text-primary">
+            how to use the MultiAsyncSelect component and fetch the options from
+            an API
+          </b>{' '}
+          to select multiple cities from a list of options.
+        </>
+      }
+    >
       <ComponentContainer>
         <div className="flex items-center gap-x-4 mb-4 w-[480px]">
           <div className="flex items-center space-x-2">
@@ -144,7 +132,7 @@ const AsyncSelectExample = () => {
           }
         />
       </ComponentContainer>
-    </div>
+    </ExampleContainer>
   );
 };
 
