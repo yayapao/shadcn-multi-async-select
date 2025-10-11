@@ -8,7 +8,7 @@ export default function SelectContentProHeader() {
     <div>
       <div className="flex items-center justify-center">
         <h1 className="text-balance text-[36px] font-semibold leading-none tracking-tighter">
-          Select Content
+          SelectContent
           <AuroraText className="italic pl-2">Pro</AuroraText>
         </h1>
       </div>
@@ -26,8 +26,8 @@ export default function SelectContentProHeader() {
         </Button>
       </div>
       <div className="text-balance text-lg">
-        <b>Override</b> the content of the select component with custom content
-        built with{' '}
+        <b>Override</b> the content of the `SelectContent` component with custom
+        content built with{' '}
         <a
           href="https://ui.shadcn.com/"
           className="underline"
