@@ -1,8 +1,8 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import HomeHeader from "./_atom/home-header";
-import Example from "./_atom/example";
-import DocumentPanel from "./_atom/document";
-import ApiDocs from "./_example/api-docs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import HomeHeader from './_atom/home-header';
+import Example from './_example';
+import DocumentPanel from './_atom/document';
+import ApiDocs from './_atom/api-docs';
 
 export default async function MultiAsyncSelectPage() {
   const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/city`);
