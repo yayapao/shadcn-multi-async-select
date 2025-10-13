@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SelectContentProHeader from './_atom/header';
 import Example from './_atom/example';
+import ApiDocs from './_atom/api-docs';
 
 export default function SelectContentProPage() {
   return (
@@ -20,7 +21,7 @@ export default function SelectContentProPage() {
             {/* <DocumentPanel /> */}
           </TabsContent>
           <TabsContent value="api" className="w-[860px]">
-            {/* <ApiDocs /> */}
+            <ApiDocs />
           </TabsContent>
         </Tabs>
       </div>
