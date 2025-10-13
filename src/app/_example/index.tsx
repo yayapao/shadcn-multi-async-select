@@ -1,6 +1,6 @@
-import AsyncSelectExample from "../_example/async-select";
-import FormSelectExample from "../_example/form-select";
-import SyncSelectExample from "../_example/sync-select";
+import AsyncSelectExample from './async-select';
+import FormSelectExample from './form-select';
+import SyncSelectExample from './sync-select';
 
 interface Props {
   options: {
